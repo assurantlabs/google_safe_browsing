@@ -1,0 +1,19 @@
+# Google Safe Browsing Rails 3 Plugin
+
+This (soon to be) gem will allow easy Google Safe Browsing integration
+with Rails 3 apps.
+
+It will include:
+
+* a migration generator for database schema
+* method to update your lists
+* method to lookup a url
+
+----------------------
+
+The interface of this gem is based upon these two gems, which are
+based on Safe Browsing v1 API:
+
+https://github.com/koke/malware_api
+and
+https://github.com/codelux/malware_api
