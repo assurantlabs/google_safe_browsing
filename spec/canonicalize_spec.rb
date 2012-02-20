@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'lib/canonicalize.rb'
 
 describe Canonicalize do
-  describe "Units tests provided by Google" do
+  it "should pass Units tests provided by Google" do
     Canonicalize.url("http://host/%25%32%35").should== "http://host/%25"
     Canonicalize.url("http://host/%25%32%35%25%32%35").should == "http://host/%25%25";
     Canonicalize.url("http://host/%2525252525252525").should == "http://host/%25";
