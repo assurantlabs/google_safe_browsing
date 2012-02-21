@@ -2,6 +2,8 @@ require 'net/http'
 require 'open-uri'
 #require File.dirname(__FILE__) + '/google_safe_browsing/version.rb'
 
+require 'google_safe_browsing/railtie' if defined?(Rails)
+
 module GoogleSafeBrowsing
   CLIENT  = 'api'
   API_KEY = 'ABQIAAAAyLR3IaNHXuIIDgTUlo9YORTqV6MDxWSrNbRxMC53QkjhMk0eYw'
