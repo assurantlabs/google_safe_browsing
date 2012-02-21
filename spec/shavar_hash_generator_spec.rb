@@ -13,13 +13,6 @@ describe GoogleSafeBrowsing::Generators::ShavarHashGenerator do
 
   specify do
     destination_root.should have_structure {
-      directory "app" do
-        directory "models" do
-          file "shavar_hash.rb" do
-            contains "class ShavarHash"
-          end
-        end
-      end
       directory "db" do
         directory "migrate" do
           migration "create_shavar_hashes" do

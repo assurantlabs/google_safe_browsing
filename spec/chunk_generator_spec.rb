@@ -13,13 +13,6 @@ describe GoogleSafeBrowsing::Generators::ChunkGenerator do
 
   specify do
     destination_root.should have_structure {
-      directory "app" do
-        directory "models" do
-          file "chunk.rb" do
-            contains "class Chunk"
-          end
-        end
-      end
       directory "db" do
         directory "migrate" do
           migration "create_chunks" do

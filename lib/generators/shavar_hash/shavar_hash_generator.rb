@@ -12,7 +12,6 @@ module GoogleSafeBrowsing
       end
 
       def create_model_file
-        template 'shavar_hash.rb', 'app/models/shavar_hash.rb'
         migration_template 'create_shavar_hashes.rb', "db/migrate/create_shavar_hashes"
       end
     end
