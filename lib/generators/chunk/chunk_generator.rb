@@ -13,7 +13,7 @@ module GoogleSafeBrowsing
 
       def create_model_file
         template 'chunk.rb', 'app/models/chunk.rb'
-        migration_template 'create_chunks', "db/migrate/create_chunks"
+        migration_template 'create_chunks.rb', "db/migrate/create_chunks"
       end
     end
   end

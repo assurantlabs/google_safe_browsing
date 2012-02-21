@@ -1,4 +1,4 @@
-class CreateShaverHashes < ActiveRecord::Migration
+class CreateShavarHashes < ActiveRecord::Migration
   def self.up
     create_table :shavar_hashes do |t|
       t.string :prefix
