@@ -7,11 +7,12 @@ require "google_safe_browsing/version"
 Gem::Specification.new do |s|
   s.name        = "google_safe_browsing"
   s.version     = GoogleSafeBrowsing::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of GoogleSafeBrowsing."
-  s.description = "TODO: Description of GoogleSafeBrowsing."
+  s.authors     = 'Chris Marshall'
+  s.email       = 'chris@chrismar035.com'
+  s.homepage    = "https://github.com/chrismar035/google_safe_browsing"
+  s.summary     = "Rails 3 plugin for Google's Safe Browsing API v2"
+  s.description = "Rails 3 plugin using Google's Safe Browsing API for url lookup against Malware and Phishing " +
+    "blacklists. Implementation includes storing and updating locally stored shavar lists and url lookup methods."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
 

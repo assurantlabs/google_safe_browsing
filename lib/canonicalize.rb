@@ -1,5 +1,6 @@
 require 'uri'
 require 'ip'
+require File.dirname(__FILE__) + '/top_level_domain.rb'
 
 class Canonicalize
 
@@ -22,27 +23,11 @@ DEFAULT_PROTOCOL = 'http'
     cann = recursively_unescape(cann)
 
     # remove leading PROTOCOL
-    if cann.index(PROTOCOL_DELIMITER)
-      delimiting_index = cann.index(PROTOCOL_DELIMITER)
-      @protocol = cann[0..delimiting_index-1]
-      protocol_end_index = delimiting_index + PROTOCOL_DELIMITER.length
-      cann = cann[protocol_end_index..-1]
-    end
+    cann = remove_protocol(cann)
 
     #split into host and path components
-    split_point = cann.index('/')
-    if split_point
-      host = cann[0..split_point-1]
-      path = cann[split_point+1..-1]
-    else
-      host = cann
-      path = ''
-    end
-    #puts "Host: #{host}"
-    #puts "Path: #{path}"
-    #puts "Fixed Path: #{fix_path path}"
-
-    cann = fix_host( host ) + '/' + fix_path( path )
+    splits = split_host_path(cann)
+    cann = fix_host( splits[:host] ) + '/' + fix_path( splits[:path] )
 
     # add leading protocol
     @protocol ||= DEFAULT_PROTOCOL
@@ -51,7 +36,62 @@ DEFAULT_PROTOCOL = 'http'
     strict_escape(cann)
   end
 
+  def self.urls_for_lookup(lookup_url)
+    lookup_url = url(lookup_url)
+
+    lookup_url = remove_protocol(lookup_url)
+
+    splits = split_host_path(lookup_url)
+
+    host_strings = [splits[:host]]
+    host = TopLevelDomain.split_from_host(splits[:host]).last(5)
+    ( host.length - 1 ).times do 
+      host_strings << host.join('.')
+      host.shift
+    end
+    host_strings.uniq!
+
+    path_split = splits[:path].split('?')
+    path = path_split[0]
+    params = path_split[1]
+
+    path_strings = [ splits[:path], path, '' ]
+    paths_to_append = path.split('/').first(3)
+    paths_to_append.length.times do
+      path_strings << paths_to_append.join('/')
+      paths_to_append.pop
+    end
+    path_strings.map!{ |p| '/' + p }
+    path_strings.uniq!.compact!
+    
+   #puts host_strings
+   #puts path_strings
+
+    cart_prod(host_strings, path_strings)
+  end
+
   private
+
+    def self.cart_prod(a_one, a_two)
+      result = []
+      a_one.each do |i|
+        a_two.each do |j|
+          result << "#{i}#{j}"
+        end
+      end
+      result
+    end
+
+    def self.split_host_path(cann)
+      ret= { :host => cann, :path => '' }
+      split_point = cann.index('/')
+      if split_point
+        ret[:host] = cann[0..split_point-1]
+        ret[:path] = cann[split_point+1..-1]
+      end
+
+      ret
+    end
 
     def self.remove_fragment(string)
       string = string[0..string.index('#')-1] if string.index('#')
@@ -119,5 +159,16 @@ DEFAULT_PROTOCOL = 'http'
 
       url
     end
+
+    def self.remove_protocol(cann)
+      if cann.index(PROTOCOL_DELIMITER)
+        delimiting_index = cann.index(PROTOCOL_DELIMITER)
+        @protocol = cann[0..delimiting_index-1]
+        protocol_end_index = delimiting_index + PROTOCOL_DELIMITER.length
+        cann = cann[protocol_end_index..-1]
+      end
+      cann
+    end
+
 
 end
