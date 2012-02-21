@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'google_safe_browsing/api_v2.rb'
 
 describe GoogleSafeBrowsing do
   describe GoogleSafeBrowsing::APIv2 do
