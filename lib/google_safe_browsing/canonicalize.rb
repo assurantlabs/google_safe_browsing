@@ -56,13 +56,18 @@ module GoogleSafeBrowsing
       path = path_split[0]
       params = path_split[1]
 
-      path_strings = [ splits[:path], path, '' ]
-      paths_to_append = path.split('/').first(3)
-      paths_to_append.length.times do
-        path_strings << paths_to_append.join('/')
-        paths_to_append.pop
+
+      path_strings = [ splits[:path], '' ]
+      if path
+        path_strings << path
+        paths_to_append = path.split('/').first(3)
+        paths_to_append.length.times do
+          path_strings << paths_to_append.join('/')
+          paths_to_append.pop
+        end
       end
       path_strings.map!{ |p| '/' + p }
+      path_strings.map!{ |p| p + '/' unless p.last == '/' }
       path_strings.uniq!.compact!
 
      #puts host_strings

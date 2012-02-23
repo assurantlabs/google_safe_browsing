@@ -1,8 +1,8 @@
 require 'generator_spec/test_case'
 
-require 'generators/shavar_hash/shavar_hash_generator'
+require 'generators/google_safe_browsing/install_generator'
 
-describe GoogleSafeBrowsing::Generators::ShavarHashGenerator do
+describe GoogleSafeBrowsing::Generators::InstallGenerator do
   include GeneratorSpec::TestCase
   destination File.expand_path('../../tmp', __FILE__)
 
@@ -18,7 +18,11 @@ describe GoogleSafeBrowsing::Generators::ShavarHashGenerator do
           migration "create_shavar_hashes" do
             contains "class CreateShavarHashes"
           end
+          migration "create_chunks" do
+            contains "class CreateChunks"
+          end
         end
+
       end
     }
   end
