@@ -1,7 +1,9 @@
 module GoogleSafeBrowsing
   class HttpHelper
     def self.uri_builder(action)
-      URI("#{HOST}/#{action}#{encode_www_form(PARAMS)}")
+      uri = URI("#{HOST}/#{action}#{encode_www_form(PARAMS)}")
+      puts uri
+      uri
     end
 
     def self.encode_www_form(hash)

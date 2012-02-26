@@ -5,8 +5,6 @@ module GoogleSafeBrowsing
 
       to_do_array = parse_data_response(data_response.body)
 
-      #delay(to_do_array[:delay_seconds])
-
       to_do_array[:lists].each do |list|
         to_do_array[:data_urls][list].each do |url|
           puts "#{list} - #{url}\n"
@@ -17,21 +15,71 @@ module GoogleSafeBrowsing
     end
 
     def self.lookup(url)
-      cann = Canonicalize.url(url)
-
-      urls = Canonicalize.urls_for_lookup(cann)
+      urls = Canonicalize.urls_for_lookup(url)
 
       hashes = []
       urls.each do |u|
         hash = ( Digest::SHA256.new << u ).to_s
-        hashes << hash[0..7]
-        puts "#{u} -- #{hash[0..7]}"
+        hashes << hash
+        #puts "#{u} -- #{hash}"
       end
 
-      ShavarHash.where(:prefix => hashes).collect{ |s| s.list }
+      if full = FullHash.where(:full_hash => hashes).first
+        return full.list
+      end
+
+      hits =  AddShavar.where(:prefix => hashes.map{|h| h[0..7]}) #.collect{ |s| [ s.list, s.prefix ] }
+      safes = SubShavar.where(:prefix => hashes.map{|h| h[0..7]})
+
+      reals = hits - safes
+
+      if reals.any?
+        full_hashes = request_full_hashes(reals.map{|r| r.prefix })
+
+        #save hashes first
+        hit_list = nil
+        full_hashes.each do |hash|
+          FullHash.create!(:list => hash[:list], :add_chunk_number => hash[:add_chunk_num],
+                                   :full_hash => hash[:full_hash])
+
+          hit_list = hash[:list] if hashes.include?(hash[:full_hash])
+        end
+        return hit_list
+      end
+      nil
     end
 
     private
+
+    def self.request_full_hashes(hash_array)
+      uri = HttpHelper.uri_builder('gethash')
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.body = "4:#{hash_array.length * 4}\n"
+      hash_array.each do |h|
+        request.body << BinaryHelper.hex_to_bin(h[0..7])
+      end
+
+      response = Net::HTTP.start(uri.host) { |http| http.request request }
+
+      parse_full_hash_response(response.body)
+    end
+
+    def self.parse_full_hash_response(response)
+      f = StringIO.new(response)
+
+      full_hashes = []
+      while(! f.eof? )
+        hash = {}
+
+        meta = f.gets.chomp.split(':')
+        hash[:list] = meta[0]
+        hash[:add_chunk_num] = meta[1]
+
+        hash[:full_hash] = f.read(meta[2].to_i).unpack('H*')[0]
+        full_hashes << hash
+      end
+      full_hashes
+    end
 
     def self.get_data(list=nil)
       # Get (via Post) List Data
@@ -49,19 +97,6 @@ module GoogleSafeBrowsing
 
       ret[:lists] = []
       ret[:data_urls] = {}
-      # each data_urls is a with an array as a value:
-      # ret[:data_urls] = {
-      #                     'list-name-here' => [
-      #                       'redirect.url.com/blah1',
-      #                       'redirect.url.com/blah2',
-      #                       'redirect.url.com/blah3',
-      #                     ],
-      #                     'list-name-here-too' => [
-      #                       'redirect.google.com/blah1',
-      #                       'redirect.google.com/blah2',
-      #                       'redirect.google.com/blah3',
-      #                     ]
-      #                   }
 
       current_list = ''
       response.split("\n").each do |line|
@@ -69,7 +104,7 @@ module GoogleSafeBrowsing
         case vals[0]
         when 'n'
           ret[:delay_seconds] = vals[1].to_i
-          @delay_seconds = ret[:delay_seconds]
+          @delay_seconds = ret[:delay_seconds].to_i
         when 'i'
           ret[:lists] << vals[1]
           current_list = vals[1]
@@ -82,15 +117,13 @@ module GoogleSafeBrowsing
           # vals[1] is a CHUNKLIST number or range representing add chunks to delete
           # we can also delete the associated Shavar Hashes
           # we no longer have to report hat we received these chunks
-          chunk_number_clause = chunklist_to_sql(vals[1], 'chunks.number')
-          shavar_number_clause = chunklist_to_sql(vals[1], 'shavar_hashes.chunk_number')
-          ShavarHash.delete_all([ "shavar_hashes.list = ? and (#{shavar_number_clause})", ret[:lists].last ])
-          Chunk.delete_all([ "chunks.list = ? and chunks.action = ? and (#{chunk_number_clause})", ret[:lists].last, 'a' ])
+          chunk_number_clause = chunklist_to_sql(vals[1])
+          AddShavar.delete_all([ "list = ? and (#{chunk_number_clause})", current_list ])
         when 'sd'
           # vals[1] is a CHUNKLIST number or range representing sub chunks to delete
           # we no longer have to report hat we received these chunks
-          chunk_number_clause = chunklist_to_sql(vals[1], 'chunks.number')
-          Chunk.delete_all([ "chunks.list = ? and chunks.action = ? and (#{chunk_number_clause})", ret[:lists].last, 's' ])
+          chunk_number_clause = chunklist_to_sql(vals[1])
+          SubShavar.delete_all([ "list = ? and (#{chunk_number_clause})", current_list ])
         end
       end
 
@@ -100,6 +133,7 @@ module GoogleSafeBrowsing
     end
 
     def self.receive_data(url, list)
+
       open(url) do |f|
         while(line = f.gets)
           line_actions = parse_data_line(line)
@@ -107,33 +141,96 @@ module GoogleSafeBrowsing
           chunk  = f.read(line_actions[:chunk_length])
           # f iterator is now set for next chunk
 
-          record_chunk(line_actions[:action], line_actions[:chunk_number], list)
+          add_attrs = { :chunk_number => line_actions[:chunk_number],
+                    :list => list, :prefix => nil, :host_key => nil
+                  }
 
-          if line_actions[:chunk_length] == 0
-            puts "No Chunk Data Here, move along"
-            next
-          end
-
-          chunk_iterator = chunk.bytes
-          host_key = BinaryHelper.read_bytes_as_hex(chunk_iterator, 4)
-          count = chunk_iterator.next
-
-          if line_actions[:action] == 'a' || line_actions[:action] == 's'
-            record_hash(chunk_iterator, count, line_actions[:hash_length], 
-                        host_key, line_actions[:chunk_number], list, line_actions[:action])
+          case line_actions[:action]
+          when 'a'
+            if line_actions[:chunk_length] == 0
+              record_add_shavar_to_insert(add_attrs)
+            else
+              chunk_iterator = chunk.bytes
+              counter = 0
+              begin
+                while true
+                  add_attrs[:host_key] = BinaryHelper.read_bytes_as_hex(chunk_iterator, 4)
+                  count = chunk_iterator.next
+                  if count > 0
+                    count.times do |i|
+                      add_attrs[:prefix] = BinaryHelper.read_bytes_as_hex(chunk_iterator, line_actions[:hash_length])
+                      record_add_shavar_to_insert(add_attrs)
+                    end
+                  else
+                    add_attrs[:prefix] = add_attrs[:host_key]
+                    record_add_shavar_to_insert(add_attrs)
+                  end
+                  counter += 1
+                end
+              rescue StopIteration
+                puts "Added #{counter} host_keys for add chunk number #{line_actions[:chunk_number]}"
+              end
+            end
+          when 's'
+            sub_attrs = add_attrs.merge({ :add_chunk_number => nil })
+            if line_actions[:chunk_length] == 0
+              record_sub_shavar_to_insert(sub_attrs)
+            else
+              chunk_iterator = chunk.bytes
+              counter = 0
+              begin
+                while true
+                  sub_attrs[:host_key] = BinaryHelper.read_bytes_as_hex(chunk_iterator, 4)
+                  count = chunk_iterator.next
+                  if count > 0
+                    count.times do |i|
+                      sub_attrs[:add_chunk_number] = BinaryHelper.unpack_add_chunk_num(BinaryHelper.read_bytes_from(chunk_iterator, 4))
+                      sub_attrs[:prefix] = BinaryHelper.read_bytes_as_hex(chunk_iterator, line_actions[:hash_length])
+                      record_sub_shavar_to_insert(sub_attrs)
+                    end
+                  else
+                    sub_attrs[:add_chunk_number] = BinaryHelper.unpack_add_chunk_num(BinaryHelper.read_bytes_from(chunk_iterator, 4))
+                    sub_attrs[:prefix] = sub_attrs[:host_key]
+                    record_sub_shavar_to_insert(sub_attrs)
+                  end
+                  counter += 1
+                end
+              rescue StopIteration
+                puts "Added #{counter} host_keys for sub chunk number #{line_actions[:chunk_number]}"
+              end
+            end
           else
             puts "neither a nor s ======================================================="
           end
+
         end
       end
+
+      # actually perform inserts
+      while @add_shavar_values && @add_shavar_values.any?
+        AddShavar.connection.execute( "insert into gsb_add_shavars (prefix, host_key, chunk_number, list) " +
+                                      " values #{@add_shavar_values.pop(10000).join(', ')}") 
+      end
+      while @sub_shavar_values && @sub_shavar_values.any?
+      SubShavar.connection.execute( "insert into gsb_sub_shavars (prefix, host_key, add_chunk_number, chunk_number, list) " +
+                                    " values #{@sub_shavar_values.pop(10000).join(', ')}") 
+      end
+      # remove invalid full_hases
+      FullHash.connection.execute("delete from gsb_full_hashes using gsb_full_hashes " + 
+                                  "inner join  gsb_sub_shavars on " +
+                                  "gsb_sub_shavars.add_chunk_number = gsb_full_hashes.add_chunk_number " +
+                                  "and gsb_sub_shavars.list = gsb_full_hashes.list;")
+      @add_shavar_values = []
+      @sub_shavar_values = []
     end
 
-    def self.record_chunk(action, chunk_number, list)
-      if chunk = Chunk.where(:number => chunk_number, :list => list).first
-        chunk.update_attributes(:action => action)
-      else
-        Chunk.create(:action => action, :number => chunk_number, :list => list)
-      end
+    def self.record_add_shavar_to_insert(h)
+      @add_shavar_values ||= []
+      @add_shavar_values << "('#{h[:prefix]}', '#{h[:host_key]}', '#{h[:chunk_number]}', '#{h[:list]}')"
+    end
+    def self.record_sub_shavar_to_insert(h)
+      @sub_shavar_values ||= []
+      @sub_shavar_values << "('#{h[:prefix]}', '#{h[:host_key]}', '#{h[:add_chunk_number]}', '#{h[:chunk_number]}', '#{h[:list]}')"
     end
 
     def self.delay(delay_seconds)
@@ -167,39 +264,6 @@ module GoogleSafeBrowsing
       ret
     end
 
-
-    def self.add_chunk(chunk_iterator, count, hash_length, host_key, chunk_number, list)
-      if count == 0
-        ShavarHash.create(:prefix => host_key, :host_key => host_key,
-                        :chunk_number => chunk_number, :list => list, :action => 'a')
-      else
-        count.times do |i|
-          prefix = BinaryHelper.read_bytes_as_hex(chunk_iterator, hash_length)
-          ShavarHash.create(:prefix => prefix, :host_key => host_key,
-                          :chunk_number => chunk_number, :list => list, :action => 'a')
-          #puts "  with this prefix: #{four_as_hex( prefix )}"
-        end
-      end
-    end
-
-    def self.sub_chunk(chunk_iterator, count, hash_length, host_key, list)
-      if count == 0
-        #puts "Sub this chunk number: #{four_as_network_order_int( chunk_number )}"
-        chunk_number = BinaryHelper.unpack_add_chunk_num(BinaryHelper.read_bytes_from(chunk_iterator, 4))
-        ShavarHash.create(:prefix => host_key, :host_key => host_key,
-                                :chunk_number => chunk_number, :list => list, :action => 's')
-      else
-        count.times do |i|
-          #puts " #{i } chunk number to remove: #{four_as_network_order_int( chunk_number )}"
-          chunk_number = BinaryHelper.unpack_add_chunk_num(BinaryHelper.read_bytes_from(chunk_iterator, 4))
-          prefix = BinaryHelper.read_bytes_as_hex(chunk_iterator, hash_length)
-          #puts "  with this prefix: #{four_as_hex( prefix )}"
-          ShavarHash.create(:prefix => prefix, :host_key => host_key,
-                                  :chunk_number => chunk_number, :list => list, :action => 's')
-        end
-      end
-    end
-
     def get_lists
       uri = HttpHelper.uri_builder('list')
       lists = Net::HTTP.get(uri).split("\n")
@@ -219,12 +283,16 @@ module GoogleSafeBrowsing
       lists.each do |list|
         ret += "#{list};"
         action_strings = []
-        ['a', 's' ].each do |action|
-          nums = GoogleSafeBrowsing::Chunk.select(:number).where(:action => action, :list => list).
-            order(:number).collect{|c| c.number }
-          #puts "#{list}:#{action} - #{nums.size}"
-          action_strings << "#{action}:#{squish_number_list(nums)}" if nums.any?
-        end
+
+
+        nums = GoogleSafeBrowsing::AddShavar.select('distinct chunk_number').where(:list => list).
+          order(:chunk_number).collect{|c| c.chunk_number }
+        action_strings << "a:#{squish_number_list(nums)}" if nums.any?
+
+        nums = GoogleSafeBrowsing::SubShavar.select('distinct chunk_number').where(:list => list).
+          order(:chunk_number).uniq.collect{|c| c.chunk_number }
+        action_strings << "s:#{squish_number_list(nums)}" if nums.any?
+
         ret += "#{action_strings.join(':')}\n"
       end
 
@@ -265,14 +333,14 @@ module GoogleSafeBrowsing
       num_strings.join(',')
     end
 
-    def self.chunklist_to_sql(chunk_list, column_name)
+    def self.chunklist_to_sql(chunk_list)
       ret_array = []
       chunk_list.split(',').each do |s|
         if s.index('-')
           range = s.split('-')
-          ret_array << "#{ column_name } between #{range[0]} and #{range[1]}"
+          ret_array << "chunk_number between #{range[0]} and #{range[1]}"
         else
-          ret_array << "#{ column_name } = #{s}"
+          ret_array << "chunk_number = #{s}"
         end
       end
       ret_array.join(" or ")

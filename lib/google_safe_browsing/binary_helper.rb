@@ -14,9 +14,9 @@ module GoogleSafeBrowsing
       ret = ''
       count.to_i.times { ret << iter.next }
       ret
-    rescue
-      puts "Tried to read past chunk iterator++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-      return ret
+   #rescue
+   #  puts "Tried to read past chunk iterator++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+   #  return nil
     end
 
     def unpack_host_key(bin)
@@ -30,6 +30,10 @@ module GoogleSafeBrowsing
 
     def self.unpack_add_chunk_num(bin)
       bin.unpack('N')[0]
+    end
+
+    def self.hex_to_bin(hex)
+      hex.to_a.pack('H*')
     end
 
   end

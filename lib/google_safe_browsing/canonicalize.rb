@@ -57,7 +57,7 @@ module GoogleSafeBrowsing
       params = path_split[1]
 
 
-      path_strings = [ splits[:path], '' ]
+      path_strings = [ splits[:path], '/' ]
       if path
         path_strings << path
         paths_to_append = path.split('/').first(3)
@@ -66,14 +66,16 @@ module GoogleSafeBrowsing
           paths_to_append.pop
         end
       end
+      #puts path_strings
       path_strings.map!{ |p| '/' + p }
-      path_strings.map!{ |p| p + '/' unless p.last == '/' }
+      path_strings.map!{ |p| p + '/' unless p[-1..-1] == '/' }
       path_strings.uniq!.compact!
 
-     #puts host_strings
-     #puts path_strings
+      #puts host_strings.length
+      #puts path_strings.length
 
-      cart_prod(host_strings, path_strings)
+      
+      ( cart_prod(host_strings, path_strings) + host_strings ).uniq
     end
 
     private

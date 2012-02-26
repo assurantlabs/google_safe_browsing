@@ -1,13 +1,15 @@
 require 'net/http'
 require 'open-uri'
+require 'active_record'
 
 require 'google_safe_browsing/google_safe_browsing_railtie' if defined?(Rails)
 
 require File.dirname(__FILE__) + '/google_safe_browsing/api_v2'
 require File.dirname(__FILE__) + '/google_safe_browsing/canonicalize'
-require File.dirname(__FILE__) + '/google_safe_browsing/chunk'
+require File.dirname(__FILE__) + '/google_safe_browsing/add_shavar'
+require File.dirname(__FILE__) + '/google_safe_browsing/sub_shavar'
+require File.dirname(__FILE__) + '/google_safe_browsing/full_hash'
 require File.dirname(__FILE__) + '/google_safe_browsing/top_level_domain'
-require File.dirname(__FILE__) + '/google_safe_browsing/shavar_hash'
 require File.dirname(__FILE__) + '/google_safe_browsing/http_helper'
 require File.dirname(__FILE__) + '/google_safe_browsing/binary_helper'
 
