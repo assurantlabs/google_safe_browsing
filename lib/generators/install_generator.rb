@@ -21,9 +21,5 @@ module GoogleSafeBrowsing
     def create_migration_files
       migration_template 'create_google_safe_browsing_tables.rb', "db/migrate/create_google_safe_browsing_tables"
     end
-
-    def create_initializer
-      create_file 'config/initializers/google_safe_browsing_initializer.rb', "GoogleSafeBrowsing::API_KEY = '' # add your API key here"
-    end
   end
 end
