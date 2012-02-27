@@ -17,6 +17,8 @@ require File.dirname(__FILE__) + '/google_safe_browsing/add_shavar'
 require File.dirname(__FILE__) + '/google_safe_browsing/sub_shavar'
 require File.dirname(__FILE__) + '/google_safe_browsing/full_hash'
 
+require File.dirname(__FILE__) + '/google_safe_browsing/rescheduler'
+
 module GoogleSafeBrowsing
   class Config
     attr_accessor :client, :app_ver, :p_ver, :host, :current_lists, :api_key
@@ -37,6 +39,11 @@ module GoogleSafeBrowsing
   def self.configure
     yield self.config
   end
+
+  def self.kick_off
+    Resque.enqueue(Rescheduler)
+  end
+
 
   def self.friendly_list_name(list)
     case list

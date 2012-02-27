@@ -44,12 +44,12 @@ module GoogleSafeBrowsing
           # vals[1] is a CHUNKLIST number or range representing add chunks to delete
           # we can also delete the associated Shavar Hashes
           # we no longer have to report hat we received these chunks
-          chunk_number_clause = chunklist_to_sql(vals[1])
+          chunk_number_clause = ChunkHelper.chunklist_to_sql(vals[1])
           AddShavar.delete_all([ "list = ? and (#{chunk_number_clause})", current_list ])
         when 'sd'
           # vals[1] is a CHUNKLIST number or range representing sub chunks to delete
           # we no longer have to report hat we received these chunks
-          chunk_number_clause = chunklist_to_sql(vals[1])
+          chunk_number_clause = ChunkHelper.chunklist_to_sql(vals[1])
           SubShavar.delete_all([ "list = ? and (#{chunk_number_clause})", current_list ])
         end
       end

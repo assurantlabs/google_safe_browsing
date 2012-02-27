@@ -2,6 +2,10 @@ module GoogleSafeBrowsing
   class GoogleSafeBrowsingRailtie < Rails::Railtie
     config.google_safe_browsing = ActiveSupport::OrderedOptions.new
 
+    rake_tasks do
+      load File.expand_path('../../tasks/google_safe_browsing_tasks.rake', __FILE__)
+    end
+
     generators do
       require File.expand_path('../../generators/install_generator', __FILE__)
     end
