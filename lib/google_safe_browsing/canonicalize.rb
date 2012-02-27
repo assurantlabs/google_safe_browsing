@@ -69,7 +69,7 @@ module GoogleSafeBrowsing
       #puts path_strings
       path_strings.map!{ |p| '/' + p }
       path_strings.map!{ |p| p + '/' unless p[-1..-1] == '/' }
-      path_strings.uniq!.compact!
+      path_strings.compact!.uniq!
 
       #puts host_strings.length
       #puts path_strings.length

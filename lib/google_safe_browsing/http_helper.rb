@@ -1,17 +1,43 @@
 module GoogleSafeBrowsing
   class HttpHelper
     def self.uri_builder(action)
-      uri = URI("#{HOST}/#{action}#{encode_www_form(PARAMS)}")
+      uri = URI("#{GoogleSafeBrowsing.config.host}/#{action}#{encoded_params}")
       puts uri
       uri
     end
 
-    def self.encode_www_form(hash)
-      param_strings = []
-      hash.each_pair do |key, val|
-        param_strings << "#{ key }=#{ val }"
+    def self.encoded_params
+      "?client=#{GoogleSafeBrowsing.config.client}" +
+      "&apikey=#{GoogleSafeBrowsing.config.api_key}" +
+      "&appver=#{GoogleSafeBrowsing.config.app_ver}" +
+      "&pver=#{GoogleSafeBrowsing.config.p_ver}"
+    end
+
+    def self.request_full_hashes(hash_array)
+      uri = uri_builder('gethash')
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.body = "4:#{hash_array.length * 4}\n"
+      hash_array.each do |h|
+        request.body << BinaryHelper.hex_to_bin(h[0..7])
       end
-      "?#{param_strings.join('&')}"
+
+      response = Net::HTTP.start(uri.host) { |http| http.request request }
+
+      ResponseHelper.parse_full_hash_response(response.body)
+    end
+
+    def self.get_data(list=nil)
+      # Get (via Post) List Data
+      uri = uri_builder('downloads')
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.body = ChunkHelper.build_chunk_list(list)
+
+      Net::HTTP.start(uri.host) { |http| http.request request }
+    end
+
+    def get_lists
+      uri = uri_builder('list')
+      lists = Net::HTTP.get(uri).split("\n")
     end
   end
 end
