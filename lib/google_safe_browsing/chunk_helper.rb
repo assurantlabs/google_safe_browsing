@@ -24,7 +24,7 @@ module GoogleSafeBrowsing
         ret += "#{action_strings.join(':')}\n"
       end
 
-      puts ret
+      #puts ret
       ret
     end
 

@@ -18,7 +18,7 @@ module GoogleSafeBrowsing
     end
 
     def self.parse_data_response(response)
-      print "\n\n#{response}\n\n"
+      #print "\n\n#{response}\n\n"
       data_urls = []
       ret = {}
 
@@ -165,8 +165,8 @@ module GoogleSafeBrowsing
 
       ret = {}
       ret[ :action ]        = split_line[0]
-      ret[ :chunk_number ]  = split_line[1] #.to_i
-      ret[ :hash_length ]   = split_line[2] #.to_i
+      ret[ :chunk_number ]  = split_line[1].to_i
+      ret[ :hash_length ]   = split_line[2].to_i
       ret[ :chunk_length ]  = split_line[3].to_i
 
       #puts "Chunk ##{s_chunk_count + a_chunk_count}"

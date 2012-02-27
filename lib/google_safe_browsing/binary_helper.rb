@@ -19,7 +19,7 @@ module GoogleSafeBrowsing
    #  return nil
     end
 
-    def unpack_host_key(bin)
+    def self.unpack_host_key(bin)
       bin.unpack('H8')[0]
     end
 
