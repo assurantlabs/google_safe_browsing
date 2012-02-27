@@ -18,9 +18,9 @@ module GoogleSafeBrowsing
       urls = Canonicalize.urls_for_lookup(url)
 
       hashes = HashHelper.urls_to_hashes(urls)
+      raw_hash_array = hashes.collect{ |h| h.to_s }
 
-
-      if full = FullHash.where(:full_hash => hashes.collect{ |h| h.to_s }).first
+      if full = FullHash.where(:full_hash => raw_hash_array).first
         return GoogleSafeBrowsing.friendly_list_name(full.list)
       end
 
@@ -37,9 +37,9 @@ module GoogleSafeBrowsing
         hit_list = nil
         full_hashes.each do |hash|
           FullHash.create!(:list => hash[:list], :add_chunk_number => hash[:add_chunk_num],
-                                   :full_hash => hash[:full_hash])
+                                       :full_hash => hash[:full_hash])
 
-          hit_list = hash[:list] if hashes.include?(hash[:full_hash])
+          hit_list = hash[:list] if raw_hash_array.include?(hash[:full_hash])
         end
         return GoogleSafeBrowsing.friendly_list_name(hit_list)
       end

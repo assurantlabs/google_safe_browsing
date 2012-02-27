@@ -66,10 +66,10 @@ module GoogleSafeBrowsing
           paths_to_append.pop
         end
       end
-      #puts path_strings
-      path_strings.map!{ |p| '/' + p }
-      path_strings.map!{ |p| p + '/' unless p[-1..-1] == '/' }
-      path_strings.compact!.uniq!
+      path_strings.map!{ |p| '/' + p + '/' }
+      path_strings.map!{ |p| p.gsub!(/\/+/, '/') }
+      path_strings.compact!
+      path_strings.uniq!
 
       #puts host_strings.length
       #puts path_strings.length

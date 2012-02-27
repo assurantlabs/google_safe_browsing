@@ -13,6 +13,7 @@ module GoogleSafeBrowsing
       def to_s
         @hash
       end
+
     end
 
     def self.urls_to_hashes(urls)
