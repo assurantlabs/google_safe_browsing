@@ -1,15 +1,91 @@
 # Google Safe Browsing Rails 3 Plugin
 
-This (soon to be) gem will allow easy Google Safe Browsing integration
+This gem allows easy Google Safe Browsing integration
 with Rails 3 apps.
 
-It will include:
+It includes:
 
 * a migration generator for database schema
 * method to update your lists
 * method to lookup a url
+* rake tasks to update hash database
+* Autonomous updating via Resque and Resque Scheduler
 
 ----------------------
+
+##Installation
+
+Install the gem
+
+    gem install google_safe_browsing
+
+Or add it to your Gemfile
+
+    #Gemfile
+
+    ...
+
+    gem 'google_safe_browsing'
+
+Then, generate the migration and run it
+
+    $ rails generate google_safe_browsing:install
+        create db/migrate/20120227143535_create_google_safe_browsing_tables.rb
+    $ rake db:migrate
+
+
+Add your Google Safe Browsing API key to congif/application.rb
+You can get a key from the [Google Safe Browsing website](http://code.google.com/apis/safebrowsing/key_signup.html)
+
+    #config/application.rb
+
+    ...
+
+    config.google_safe_browsing_key = 'MySuperAwesomeKey5124'
+
+
+## Rake Tasks
+
+You can run an update manually
+
+    $ rake google_safe_browsing:update
+
+Or, if you have [Resque](https://github.com/defunkt/resque) and 
+[Resque Scheduler](https://github.com/bvandenbos/resque-scheduler) set up, you can 
+run an update and automatically schedule another update based on the 'next polling 
+interval' parameter from the API
+
+    $ rake google_safe_browsing:update_and_reschedule
+
+## Usage
+
+To programatically run an update in your app
+
+    GoogleSafeBrowsing::APIv2.update
+
+Note: This can take a while, especially when first seeding your database. I wouldn't recommend
+calling this in a controller for a normal page request.
+
+To check a url for badness
+
+    GoogleSafeBrowsing::APIv2.lookup('http://bad.url.address.here.com.edu/forProfit')
+
+The url string parameter does not have to be any specific format or Canonicalization the Google
+Safe Browsing gem will handle all of that for you. Please report any errors from a weirdly formatted 
+url though. I most likely have missed some cases.
+
+The `lookup` method returns a string ( either 'malware' or 'phishing' ) for the name of the black list
+which the url appears on, or `nil` if the url is not on Google's list.
+
+----------------
+
+### More information
+
+[Google Safe Browsing API Reference](http://code.google.com/apis/safebrowsing/)
+
+----------------
+
+### Inspiration
 
 The interface of this gem is based upon these two gems, which are
 based on Safe Browsing v1 API:
@@ -17,3 +93,9 @@ based on Safe Browsing v1 API:
 https://github.com/koke/malware_api
 and
 https://github.com/codelux/malware_api
+
+------------------
+
+Thank you for using my gem! Please report any bugs or issues. Contributions are also always welcome!
+
+-- Chris Marshall
