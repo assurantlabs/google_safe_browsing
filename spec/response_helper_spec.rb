@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'google_safe_browsing/response_helper'
 
 describe GoogleSafeBrowsing::ResponseHelper do
   describe 'parse_data_line' do

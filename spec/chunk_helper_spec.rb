@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'google_safe_browsing/chunk_helper'
 
 describe GoogleSafeBrowsing::ChunkHelper do
   describe 'building chunk lists' do
@@ -13,10 +12,6 @@ describe GoogleSafeBrowsing::ChunkHelper do
         GoogleSafeBrowsing::ChunkHelper.build_chunk_list.should== 
           GoogleSafeBrowsing.config.current_lists.map{|l| "#{l};\n"}.join
       end
-    end
-
-    describe 'with data' do
-      it 'should read the chunk numbers and produce the correct chunklist format'
     end
   end
 

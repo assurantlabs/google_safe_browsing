@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'google_safe_browsing/binary_helper'
 
 describe GoogleSafeBrowsing::BinaryHelper do
   describe 'read_bytes_as_hex' do
@@ -22,6 +21,11 @@ describe GoogleSafeBrowsing::BinaryHelper do
   end
 
   describe 'read_bytes_from' do
-    it 'should read bytes from the stream'
+    it 'should read bytes from the stream' do
+      @expected = 'abcd'
+      @iter = @expected.bytes
+      GoogleSafeBrowsing::BinaryHelper.read_bytes_from(@iter, @expected.length).
+        should== @expected
+    end
   end
 end

@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'google_safe_browsing/canonicalize.rb'
 
 describe GoogleSafeBrowsing::Canonicalize do
   it "should pass Units tests provided by Google" do

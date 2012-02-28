@@ -2,7 +2,6 @@ module GoogleSafeBrowsing
   class HttpHelper
     def self.uri_builder(action)
       uri = URI("#{GoogleSafeBrowsing.config.host}/#{action}#{encoded_params}")
-      puts uri
       uri
     end
 

@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'google_safe_browsing/hash_helper'
 
 describe GoogleSafeBrowsing::HashHelper do
   describe GoogleSafeBrowsing::HashHelper::GsbHash do
