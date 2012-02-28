@@ -41,7 +41,7 @@ You can get a key from the [Google Safe Browsing website](http://code.google.com
 
     ...
 
-    config.google_safe_browsing_key = 'MySuperAwesomeKey5124'
+    config.google_safe_browsing.api_key = 'MySuperAwesomeKey5124'
 
 
 ## Rake Tasks
