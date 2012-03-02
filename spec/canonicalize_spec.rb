@@ -36,4 +36,107 @@ describe GoogleSafeBrowsing::Canonicalize do
     GoogleSafeBrowsing::Canonicalize.url("http://host.com/ab%23cd").should == "http://host.com/ab%23cd";
     GoogleSafeBrowsing::Canonicalize.url("http://host.com//twoslashes?more//slashes").should == "http://host.com/twoslashes?more//slashes";
   end
+
+  describe "urls for lookup method" do
+    it "should returns an array of URLs for hashing and lookup from url with params" do
+      url = 'http://a.b.c/1/2.html?param=1'
+      urls = [ 'a.b.c/1/2.html?param=1',
+               'a.b.c/1/2.html',
+               'a.b.c/',
+               'a.b.c/1/',
+               'b.c/1/2.html?param=1',
+               'b.c/1/2.html',
+               'b.c/',
+               'b.c/1/'
+             ]
+      GoogleSafeBrowsing::Canonicalize.urls_for_lookup(url).sort.
+        should== urls.sort
+    end
+
+    it "should returns an array of URLs for hashing and lookup from url with many hosts" do
+      url = 'a.b.c.d.e.f.g/1.html'
+      urls = [
+        'a.b.c.d.e.f.g/1.html',
+        'a.b.c.d.e.f.g/',
+        'c.d.e.f.g/1.html',
+        'c.d.e.f.g/',
+        'd.e.f.g/1.html',
+        'd.e.f.g/',
+        'e.f.g/1.html',
+        'e.f.g/',
+        'f.g/1.html',
+        'f.g/'
+      ]
+      GoogleSafeBrowsing::Canonicalize.urls_for_lookup(url).sort.
+        should== urls.sort
+    end
+  end
+
+  describe "cart_prod method" do
+    it "should return the cartesian product of two arrays with concatination" do
+      verbs = [ 'jump', 'climb', 'surf' ]
+      suffixes = [ 's', 'ed', 'ing' ]
+      cart = [ 'jumps', 'jumped', 'jumping', 
+               'climbs', 'climbed', 'climbing',
+               'surfs', 'surfed', 'surfing' ]
+      GoogleSafeBrowsing::Canonicalize.cart_prod(verbs, suffixes).
+        should== cart
+    end
+  end
+
+  describe "split host name method" do
+    it "should split a url into host and path components" do
+      host = 'test.com'
+      path = 'test/path/components.html'
+      joined = { :host => host, :path => path }
+      GoogleSafeBrowsing::Canonicalize.
+        split_host_path(host + '/' + path).should== joined
+    end
+  end
+
+  describe "remove protocol" do
+    it 'should remove the protocol when present' do
+      host = 'test.url.com/'
+      url = "http://#{host}"
+      GoogleSafeBrowsing::Canonicalize.
+        remove_protocol(url).should== host
+    end
+
+    it 'should return the original string if no protocol present' do
+      host = 'test.url.com/'
+      GoogleSafeBrowsing::Canonicalize.
+        remove_protocol(host).should== host
+    end
+  end
+
+  describe "remove port method" do
+    it 'should remove the port when present' do
+      host = 'test.url.com/'
+      url = "#{host}:8000"
+      GoogleSafeBrowsing::Canonicalize.
+        remove_port(url).should== host
+    end
+
+    it 'should return the original string if no port present' do
+      host = 'test.url.com/'
+      GoogleSafeBrowsing::Canonicalize.
+        remove_port(host).should== host
+    end
+  end
+
+  describe "remove username and password method" do
+    it 'should remove the username and password when present' do
+      host = 'test.url.com/'
+      url = "tester:pa55word@#{host}"
+      GoogleSafeBrowsing::Canonicalize.
+        remove_username_and_password(url).should== host
+    end
+
+    it 'should return the original string if no username/password present' do
+      host = 'test.url.com/'
+      GoogleSafeBrowsing::Canonicalize.
+        remove_username_and_password(host).should== host
+    end
+  end
 end
+

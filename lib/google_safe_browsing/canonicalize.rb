@@ -44,41 +44,61 @@ module GoogleSafeBrowsing
 
       splits = split_host_path(lookup_url)
 
-      host_strings = [splits[:host]]
-      host = TopLevelDomain.split_from_host(splits[:host]).last(5)
+      host_string = strip_username_password_and_port_from_host(splits[:host])
+
+      host_strings = [host_string]
+      host = TopLevelDomain.split_from_host(host_string).last(5)
       ( host.length - 1 ).times do 
         host_strings << host.join('.')
         host.shift
       end
       host_strings.uniq!
 
-      path_split = splits[:path].split('?')
+      path_strings = generate_path_strings(splits[:path])
+
+      cart_prod(host_strings, path_strings)
+    end
+
+    private
+
+    def self.generate_path_strings(raw_path)
+      return [ '/' ] if raw_path == ''
+
+      path_split = raw_path.split('?')
       path = path_split[0]
       params = path_split[1]
 
 
-      path_strings = [ splits[:path], '/' ]
-      if path
-        path_strings << path
-        paths_to_append = path.split('/').first(3)
-        paths_to_append.length.times do
-          path_strings << paths_to_append.join('/')
-          paths_to_append.pop
+      path_components = path.split('/').first(3)
+      path_strings = [ '/' ]
+      path_components.length.times do
+        path_strings << '/' + path_components.join('/')
+        path_components.pop
+      end
+
+      path_strings.map! do |p|
+        unless p.index('.')
+          p + '/'
+        else
+          p
         end
       end
-      path_strings.map!{ |p| '/' + p + '/' }
-      path_strings.map!{ |p| p.gsub!(/\/+/, '/') }
+      path_strings.map!{ |p| p.to_s.gsub!(/\/+/, '/') }
       path_strings.compact!
       path_strings.uniq!
 
-      #puts host_strings.length
-      #puts path_strings.length
-
-      
-      ( cart_prod(host_strings, path_strings) + host_strings ).uniq
+      if params
+        path_strings | path_strings.map do |p|
+          if p[-1..-1] == '/'
+            p
+          else
+            "#{p}?#{params}"
+          end
+        end
+      else
+        return path_strings
+      end
     end
-
-    private
 
       def self.cart_prod(a_one, a_two)
         result = []
@@ -176,6 +196,29 @@ module GoogleSafeBrowsing
           cann = cann[protocol_end_index..-1]
         end
         cann
+      end
+
+      def self.strip_username_password_and_port_from_host(host_string)
+        host_string = remove_port(host_string)
+        remove_username_and_password(host_string)
+      end
+
+      def self.remove_port(host_string)
+        port_sep = host_string.rindex(':')
+        if port_sep
+          host_string[0..port_sep-1]
+        else
+          host_string
+        end
+      end
+
+      def self.remove_username_and_password(host_string)
+        un_sep = host_string.index('@')
+        if un_sep
+          host_string[un_sep+1..-1]
+        else
+          host_string
+        end
       end
   end
 end
