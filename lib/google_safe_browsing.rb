@@ -20,6 +20,8 @@ require File.dirname(__FILE__) + '/google_safe_browsing/full_hash'
 require File.dirname(__FILE__) + '/google_safe_browsing/rescheduler'
 
 module GoogleSafeBrowsing
+
+  # Handles the configuration values for the module
   class Config
     attr_accessor :client, :app_ver, :p_ver, :host, :current_lists, :api_key
 
@@ -32,19 +34,26 @@ module GoogleSafeBrowsing
     end
   end
 
+  # Returns of initializes the Module configuration
   def self.config
     @@config ||= Config.new
   end
 
+  # Allows for setting config values via a block
   def self.configure
     yield self.config
   end
 
+  # Adds the Rescheduler job to Resque
   def self.kick_off
     Resque.enqueue(Rescheduler)
   end
 
 
+  # Converts the official Google list name into the name to return
+  #
+  # @param (String) list the 'official' list name
+  # @return (String) the friendly list name
   def self.friendly_list_name(list)
     case list
     when 'goog-malware-shavar'

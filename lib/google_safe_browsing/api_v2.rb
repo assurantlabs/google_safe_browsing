@@ -1,5 +1,9 @@
 module GoogleSafeBrowsing
+  # Main Interface for Module
   class APIv2
+    # Completes an update
+    #
+    # @return (Integer) the number of seconds before this method should be called again
     def self.update
       data_response = HttpHelper.get_data
 
@@ -14,6 +18,10 @@ module GoogleSafeBrowsing
       to_do_array[:delay_seconds]
     end
 
+    # Performs a lookup of the given url
+    #
+    # @param (String) url a url string to be looked up
+    # @return (String, nil) the friendly list name if found, or `nil` 
     def self.lookup(url)
       urls = Canonicalize.urls_for_lookup(url)
 
@@ -46,6 +54,9 @@ module GoogleSafeBrowsing
       nil
     end
 
+    # Can be used to force a delay into a script running updates
+    #
+    # @param (Integer) delay_seconds the number of seconds to delay, should be the return value of {update}
     def self.delay(delay_seconds)
       puts "Google told us to wait for #{delay_seconds} seconds"
       puts "We will wait...."
