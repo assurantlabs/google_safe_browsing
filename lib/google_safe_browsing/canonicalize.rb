@@ -62,7 +62,7 @@ module GoogleSafeBrowsing
     private
 
     def self.generate_path_strings(raw_path)
-      return [ '/' ] if raw_path == ''
+      return [ '/', '' ] if raw_path == ''
 
       path_split = raw_path.split('?')
       path = path_split[0]
