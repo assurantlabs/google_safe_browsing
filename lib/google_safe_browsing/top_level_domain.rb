@@ -20,6 +20,9 @@ module GoogleSafeBrowsing
       tld
     end
 
+    # return array of host components (www, example, com from www.example.com)
+    # taking into account of top level domains
+    # e.g. 'sub.domain.example.co.uk' => [ 'sub', 'domain', 'example', 'co.uk' ]
     def self.split_from_host(host)
       components = host.split('.')
 

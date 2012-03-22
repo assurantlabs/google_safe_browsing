@@ -24,6 +24,7 @@ module GoogleSafeBrowsing
     # @return (String, nil) the friendly list name if found, or `nil` 
     def self.lookup(url)
       urls = Canonicalize.urls_for_lookup(url)
+      return '' if urls.empty?
 
       hashes = HashHelper.urls_to_hashes(urls)
       raw_hash_array = hashes.collect{ |h| h.to_s }
