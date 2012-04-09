@@ -96,6 +96,4 @@ https://github.com/codelux/malware_api
 
 ------------------
 
-Thank you for using my gem! Please report any bugs or issues. Contributions are also always welcome!
-
--- Chris Marshall
+Thank you for using this gem! Please report any bugs or issues. Contributions are also always welcome!
