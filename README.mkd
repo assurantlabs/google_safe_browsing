@@ -1,15 +1,15 @@
-# Google Safe Browsing Rails 3 Plugin
+# Google Safe Browsing Gem
 
-This gem allows easy Google Safe Browsing integration
-with Rails 3 apps.
+This gem allows easy Google Safe Browsing APIv2 usage with optional integration
+into Rails 3 apps.
 
 It includes:
 
 * a migration generator for database schema
-* method to update your lists
+* method to update hash database
 * method to lookup a url
 * rake tasks to update hash database
-* Autonomous updating via Resque and Resque Scheduler
+* Autonomous updating via Resque and Resque Scheduler (optional)
 
 ----------------------
 
@@ -96,4 +96,4 @@ https://github.com/codelux/malware_api
 
 ------------------
 
-Thank you for using this gem! Please report any bugs or issues. Contributions are also always welcome!
+Thank you for using this gem! Please report any bugs or issues.
