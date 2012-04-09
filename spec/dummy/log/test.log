@@ -226,3 +226,15 @@
   [1m[35mGoogleSafeBrowsing::SubShavar Load (0.1ms)[0m  SELECT distinct chunk_number FROM "gsb_sub_shavars" WHERE "gsb_sub_shavars"."list" = 'googpub-phish-shavar' ORDER BY chunk_number
   [1m[36mGoogleSafeBrowsing::AddShavar Load (0.1ms)[0m  [1mSELECT distinct chunk_number FROM "gsb_add_shavars" WHERE "gsb_add_shavars"."list" = 'goog-malware-shavar' ORDER BY chunk_number[0m
   [1m[35mGoogleSafeBrowsing::SubShavar Load (0.1ms)[0m  SELECT distinct chunk_number FROM "gsb_sub_shavars" WHERE "gsb_sub_shavars"."list" = 'goog-malware-shavar' ORDER BY chunk_number
+  [1m[36mGoogleSafeBrowsing::AddShavar Load (0.6ms)[0m  [1mSELECT distinct chunk_number FROM "gsb_add_shavars" WHERE "gsb_add_shavars"."list" = 'googpub-phish-shavar' ORDER BY chunk_number[0m
+  [1m[35mGoogleSafeBrowsing::SubShavar Load (0.3ms)[0m  SELECT distinct chunk_number FROM "gsb_sub_shavars" WHERE "gsb_sub_shavars"."list" = 'googpub-phish-shavar' ORDER BY chunk_number
+  [1m[36mGoogleSafeBrowsing::AddShavar Load (0.1ms)[0m  [1mSELECT distinct chunk_number FROM "gsb_add_shavars" WHERE "gsb_add_shavars"."list" = 'googpub-phish-shavar' ORDER BY chunk_number[0m
+  [1m[35mGoogleSafeBrowsing::SubShavar Load (0.1ms)[0m  SELECT distinct chunk_number FROM "gsb_sub_shavars" WHERE "gsb_sub_shavars"."list" = 'googpub-phish-shavar' ORDER BY chunk_number
+  [1m[36mGoogleSafeBrowsing::AddShavar Load (0.1ms)[0m  [1mSELECT distinct chunk_number FROM "gsb_add_shavars" WHERE "gsb_add_shavars"."list" = 'goog-malware-shavar' ORDER BY chunk_number[0m
+  [1m[35mGoogleSafeBrowsing::SubShavar Load (0.1ms)[0m  SELECT distinct chunk_number FROM "gsb_sub_shavars" WHERE "gsb_sub_shavars"."list" = 'goog-malware-shavar' ORDER BY chunk_number
+  [1m[36mGoogleSafeBrowsing::AddShavar Load (0.1ms)[0m  [1mSELECT distinct chunk_number FROM "gsb_add_shavars" WHERE "gsb_add_shavars"."list" = 'googpub-phish-shavar' ORDER BY chunk_number[0m
+  [1m[35mGoogleSafeBrowsing::SubShavar Load (0.1ms)[0m  SELECT distinct chunk_number FROM "gsb_sub_shavars" WHERE "gsb_sub_shavars"."list" = 'googpub-phish-shavar' ORDER BY chunk_number
+  [1m[36mGoogleSafeBrowsing::AddShavar Load (0.1ms)[0m  [1mSELECT distinct chunk_number FROM "gsb_add_shavars" WHERE "gsb_add_shavars"."list" = 'googpub-phish-shavar' ORDER BY chunk_number[0m
+  [1m[35mGoogleSafeBrowsing::SubShavar Load (0.1ms)[0m  SELECT distinct chunk_number FROM "gsb_sub_shavars" WHERE "gsb_sub_shavars"."list" = 'googpub-phish-shavar' ORDER BY chunk_number
+  [1m[36mGoogleSafeBrowsing::AddShavar Load (0.1ms)[0m  [1mSELECT distinct chunk_number FROM "gsb_add_shavars" WHERE "gsb_add_shavars"."list" = 'goog-malware-shavar' ORDER BY chunk_number[0m
+  [1m[35mGoogleSafeBrowsing::SubShavar Load (0.1ms)[0m  SELECT distinct chunk_number FROM "gsb_sub_shavars" WHERE "gsb_sub_shavars"."list" = 'goog-malware-shavar' ORDER BY chunk_number

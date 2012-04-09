@@ -58,7 +58,6 @@ module GoogleSafeBrowsing
       #return empty array unless host_string has at least one period
       return [] unless host_string.include?('.')
 
-      puts host_string
       host_strings = [host_string]
       host = TopLevelDomain.split_from_host(host_string).last(5)
       ( host.length - 1 ).times do 
