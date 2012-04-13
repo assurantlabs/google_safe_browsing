@@ -21,10 +21,10 @@ module GoogleSafeBrowsing
     # Performs a lookup of the given url
     #
     # @param (String) url a url string to be looked up
-    # @return (String, nil) the friendly list name if found, or `nil` 
+    # @return (String, nil) the friendly list name if found, or `nil`
     def self.lookup(url)
       urls = Canonicalize.urls_for_lookup(url)
-      return '' if urls.empty?
+      return nil if urls.empty?
 
       hashes = HashHelper.urls_to_hashes(urls)
       raw_hash_array = hashes.collect{ |h| h.to_s }
