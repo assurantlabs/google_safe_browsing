@@ -15,7 +15,7 @@ class CreateGoogleSafeBrowsingTables < ActiveRecord::Migration
       t.string :list, :null => false
     end
     add_index :gsb_add_shavars, :host_key
-    add_index :gsb_add_shavars, [:host_key, :prefix ]
+    add_index :gsb_add_shavars, :prefix
 
     create_table :gsb_sub_shavars do |t|
       t.string :prefix
@@ -25,7 +25,7 @@ class CreateGoogleSafeBrowsingTables < ActiveRecord::Migration
       t.string :list, :null => false
     end
     add_index :gsb_sub_shavars, :host_key
-    add_index :gsb_sub_shavars, [:host_key, :prefix ]
+    add_index :gsb_sub_shavars, :prefix
 
   end
 

@@ -181,7 +181,7 @@ module GoogleSafeBrowsing
 
         host.downcase!
 
-        host = IP::V4.new(host.to_i).to_s if host.to_i > 256
+        host = IP::V4.new(host).to_s if host =~ /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
 
         host
       end
