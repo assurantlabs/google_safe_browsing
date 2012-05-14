@@ -81,8 +81,8 @@ module GoogleSafeBrowsing
         return [ '/', '' ] if raw_path == ''
 
         path_split = raw_path.split('?')
-        path = path_split[0]
-        params = path_split[1]
+        path = path_split[0] || ''
+        params = path_split[1] || ''
 
 
         path_components = path.split('/').first(3)
