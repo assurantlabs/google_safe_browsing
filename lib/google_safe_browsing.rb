@@ -4,7 +4,7 @@ require 'active_record'
 
 require 'google_safe_browsing/google_safe_browsing_railtie' if defined?(Rails)
 
-#require  'google_safe_browsing/version'
+require  'google_safe_browsing/version'
 
 require  'google_safe_browsing/api_v2'
 require  'google_safe_browsing/binary_helper'

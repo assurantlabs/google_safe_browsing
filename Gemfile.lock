@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    google_safe_browsing (0.3.6)
+    google_safe_browsing (0.3.7)
       activerecord
       rails
       ruby-ip
