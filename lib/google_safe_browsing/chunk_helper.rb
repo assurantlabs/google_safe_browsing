@@ -1,7 +1,7 @@
 module GoogleSafeBrowsing
   class ChunkHelper
-    def self.build_chunk_list(list=nil)
-      lists = if list
+    def self.build_chunk_list(*list)
+      lists = if list.any?
                 list.to_a
               else
                 GoogleSafeBrowsing.config.current_lists

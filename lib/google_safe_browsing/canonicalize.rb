@@ -71,7 +71,7 @@ module GoogleSafeBrowsing
       cart_prod(host_strings, path_strings)
     end
 
-    private
+   # private
 
       # Generates the path permutations from the raw path string
       #
@@ -103,9 +103,9 @@ module GoogleSafeBrowsing
         path_strings.compact!
         path_strings.uniq!
 
-        if params
+        unless params.blank?
           path_strings | path_strings.map do |p|
-            if p[-1..-1] == '/'
+            if p[-1] == '/'
               p
             else
               "#{p}?#{params}"
@@ -181,7 +181,11 @@ module GoogleSafeBrowsing
 
         host.downcase!
 
-        host = IP::V4.new(host).to_s if host =~ /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
+        if host =~ /^\d+$/
+          host = IP::V4.new(host.to_i).to_addr
+        elsif host =~ /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
+          host = IP.new(host).to_addr 
+        end
 
         host
       end

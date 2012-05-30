@@ -4,7 +4,7 @@ describe GoogleSafeBrowsing::ChunkHelper do
   describe 'building chunk lists' do
     describe 'without and chunks' do
       it 'should build a single chunk list if given a list' do
-        GoogleSafeBrowsing::ChunkHelper.build_chunk_list('googpub-phish-shavar').should== 
+        GoogleSafeBrowsing::ChunkHelper.build_chunk_list('googpub-phish-shavar').should==
           "googpub-phish-shavar;\n"
       end
 
