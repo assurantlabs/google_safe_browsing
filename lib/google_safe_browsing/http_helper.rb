@@ -22,7 +22,7 @@ module GoogleSafeBrowsing
 
       response = Net::HTTP.start(uri.host) { |http| http.request request }
 
-      if response.code == 200
+      if response.is_a?(Net::HTTPSuccess)
         ResponseHelper.parse_full_hash_response(response.body)
       else
         # if response not good, return empty array to represent no full hashes
