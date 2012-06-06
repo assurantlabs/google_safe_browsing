@@ -62,7 +62,7 @@ module GoogleSafeBrowsing
     # @param (String) hex string to encode
     # @return (String) encoded string
     def self.hex_to_bin(hex)
-      hex.to_a.pack('H*')
+      [hex].pack('H*')
     end
 
   end
