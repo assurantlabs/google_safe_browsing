@@ -138,5 +138,18 @@ describe GoogleSafeBrowsing::Canonicalize do
         remove_username_and_password(host).should== host
     end
   end
+
+  describe 'fixing invalid hosts' do
+    it 'should return nil for local IP Addresses' do
+      host = '192.168.1.1'
+        GoogleSafeBrowsing::Canonicalize.
+          fix_host(host).should== host
+    end
+    it 'should return nil regardless of creds or port' do
+      host = 'what:beef@192.168.1.1:3000'
+        GoogleSafeBrowsing::Canonicalize.
+          fix_host(host).should== host
+    end
+  end
 end
 
