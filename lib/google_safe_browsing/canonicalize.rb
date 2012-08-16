@@ -14,7 +14,8 @@ module GoogleSafeBrowsing
     # @param (String) uncanonicalized url string
     # @return (String) canonicalized url string
     def self.url(raw_url)
-      #puts raw_url
+      raw_url = raw_url.to_s
+
       #remove tabs, carriage returns and line feeds
       raw_url.gsub!("\t",'')
       raw_url.gsub!("\r",'')
