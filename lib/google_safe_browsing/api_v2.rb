@@ -23,7 +23,7 @@ module GoogleSafeBrowsing
     # @param (String) url a url string to be looked up
     # @return (String, nil) the friendly list name if found, or `nil`
     def self.lookup(url)
-      urls = Canonicalize.urls_for_lookup(url)
+      urls = Canonicalize.urls_for_lookup(url.force_encoding('ASCII-8BIT'))
       return nil if urls.empty?
 
       hashes = HashHelper.urls_to_hashes(urls)
