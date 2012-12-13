@@ -45,12 +45,12 @@ module GoogleSafeBrowsing
           # we can also delete the associated Shavar Hashes
           # we no longer have to report hat we received these chunks
           chunk_number_clause = ChunkHelper.chunklist_to_sql(vals[1])
-          AddShavar.delete_all([ "list = ? and (#{chunk_number_clause})", current_list ])
+          AddShavar.delete_all([ "list = ? and (?)", current_list, chunk_number_clause ])
         when 'sd'
           # vals[1] is a CHUNKLIST number or range representing sub chunks to delete
           # we no longer have to report hat we received these chunks
           chunk_number_clause = ChunkHelper.chunklist_to_sql(vals[1])
-          SubShavar.delete_all([ "list = ? and (#{chunk_number_clause})", current_list ])
+          SubShavar.delete_all([ "list = ? and (?)", current_list, chunk_number_clause ])
         end
       end
 
@@ -136,14 +136,14 @@ module GoogleSafeBrowsing
       # actually perform inserts
       while @add_shavar_values && @add_shavar_values.any?
         AddShavar.connection.execute( "insert into gsb_add_shavars (prefix, host_key, chunk_number, list) " +
-                                      " values #{@add_shavar_values.pop(10000).join(', ')}") 
+                                      " values #{@add_shavar_values.pop(10000).map{|v| ActiveRecord::Base::sanitize(v) }.join(', ')}")
       end
       while @sub_shavar_values && @sub_shavar_values.any?
       SubShavar.connection.execute( "insert into gsb_sub_shavars (prefix, host_key, add_chunk_number, chunk_number, list) " +
-                                    " values #{@sub_shavar_values.pop(10000).join(', ')}") 
+                                    " values #{@sub_shavar_values.pop(10000).map{|v| ActiveRecord::Base::sanitize(v) }.join(', ')}")
       end
       # remove invalid full_hases
-      FullHash.connection.execute("delete from gsb_full_hashes using gsb_full_hashes " + 
+      FullHash.connection.execute("delete from gsb_full_hashes using gsb_full_hashes " +
                                   "inner join  gsb_sub_shavars on " +
                                   "gsb_sub_shavars.add_chunk_number = gsb_full_hashes.add_chunk_number " +
                                   "and gsb_sub_shavars.list = gsb_full_hashes.list;")
