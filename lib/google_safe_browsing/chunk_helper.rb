@@ -1,8 +1,8 @@
 module GoogleSafeBrowsing
   class ChunkHelper
-    def self.build_chunk_list(*list)
-      lists = if list.any?
-                list.to_a
+    def self.build_chunk_list(*lists)
+      lists = if lists.any?
+                lists.to_a
               else
                 GoogleSafeBrowsing.config.current_lists
               end
@@ -24,26 +24,18 @@ module GoogleSafeBrowsing
         ret += "#{action_strings.join(':')}\n"
       end
 
-      #puts ret
       ret
     end
 
     def self.squish_number_list(chunks)
       num_strings = []
+      streak_begin = last_num = chunks.shift
 
-      streak_begin = chunks[0]
-      last_num = chunks.shift
       chunks.each do |c|
-        if c == last_num+1
-          #puts "streak continues"
-        else
-          #puts "streak has ended"
+        unless c == last_num+1
           if streak_begin != last_num
-            streak_string = "#{streak_begin}-#{last_num}"
-            #puts "there is a streak: #{streak_string}"
-            num_strings << streak_string
+            num_strings << "#{streak_begin}-#{last_num}"
           else
-            #puts "streak was one long: #{last_num}"
             num_strings << last_num
           end
           streak_begin = c

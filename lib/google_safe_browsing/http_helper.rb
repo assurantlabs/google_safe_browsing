@@ -22,16 +22,14 @@ module GoogleSafeBrowsing
 
       response = Net::HTTP.start(uri.host) { |http| http.request request }
 
-      if response.is_a?(Net::HTTPSuccess) && !response.body.blank? # we are seeing blank responses from Google
+      if response.is_a?(Net::HTTPSuccess) && !response.body.blank?
         ResponseHelper.parse_full_hash_response(response.body)
       else
-        # if response not good, return empty array to represent no full hashes
         []
       end
     end
 
     def self.get_data(list=nil)
-      # Get (via Post) List Data
       uri = uri_builder('downloads')
       request = Net::HTTP::Post.new(uri.request_uri)
       request.body = ChunkHelper.build_chunk_list(list)
