@@ -1,7 +1,10 @@
 module GoogleSafeBrowsing
   class HttpHelper
-    def self.uri_builder(action)
-      uri = URI("#{GoogleSafeBrowsing.config.host}/#{action}#{encoded_params}")
+    def self.uri_builder(action, use_ssl=false)
+      host = GoogleSafeBrowsing.config.host
+      host = switch_to_https(host) if use_ssl
+
+      uri = URI("#{host}/#{action}#{encoded_params}")
       uri
     end
 
@@ -41,5 +44,11 @@ module GoogleSafeBrowsing
       uri = uri_builder('list')
       Net::HTTP.get(uri).split("\n")
     end
+
+
+    private
+      def self.switch_to_https(url)
+        "https#{url[4..-1]}"
+      end
   end
 end
