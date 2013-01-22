@@ -6,9 +6,9 @@ module GoogleSafeBrowsing
     end
 
     def self.encoded_params
-      "?client=#{GoogleSafeBrowsing.config.client}" +
-      "&apikey=#{GoogleSafeBrowsing.config.api_key}" +
-      "&appver=#{GoogleSafeBrowsing.config.app_ver}" +
+      "?client=#{GoogleSafeBrowsing.config.client}" <<
+      "&apikey=#{GoogleSafeBrowsing.config.api_key}" <<
+      "&appver=#{GoogleSafeBrowsing.config.app_ver}" <<
       "&pver=#{GoogleSafeBrowsing.config.p_ver}"
     end
 
