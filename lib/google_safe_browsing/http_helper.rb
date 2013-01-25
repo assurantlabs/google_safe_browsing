@@ -8,13 +8,6 @@ module GoogleSafeBrowsing
       uri
     end
 
-    def self.encoded_params
-      "?client=#{GoogleSafeBrowsing.config.client}" <<
-      "&apikey=#{GoogleSafeBrowsing.config.api_key}" <<
-      "&appver=#{GoogleSafeBrowsing.config.app_ver}" <<
-      "&pver=#{GoogleSafeBrowsing.config.p_ver}"
-    end
-
     def self.request_full_hashes(hash_array)
       uri = uri_builder('gethash')
       request = Net::HTTP::Post.new(uri.request_uri)
@@ -47,6 +40,17 @@ module GoogleSafeBrowsing
 
 
     private
+      def self.encoded_params
+        params = "?client=#{GoogleSafeBrowsing.config.client}" <<
+        "&apikey=#{GoogleSafeBrowsing.config.api_key}" <<
+        "&appver=#{GoogleSafeBrowsing.config.app_ver}" <<
+        "&pver=#{GoogleSafeBrowsing.config.p_ver}"
+
+        params << "&wrkey=#{GoogleSafeBrowsing.config.wrapped_key}" if GoogleSafeBrowsing.config.have_keys?
+
+        params
+      end
+
       def self.switch_to_https(url)
         "https#{url[4..-1]}"
       end
