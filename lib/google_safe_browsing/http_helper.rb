@@ -53,6 +53,19 @@ module GoogleSafeBrowsing
         params
       end
 
+      def self.with_keys(uri)
+        begin
+          get_keys unless GoogleSafeBrowsing.config.have_keys?
+          response = yield uri
+        end while self.please_rekey?(response.body)
+
+        if self.valid_mac?(response.body)
+          response
+        else
+          raise InvalidMACValidation, "The MAC returned from '#{uri}' is not valid."
+        end
+      end
+
       def self.valid_mac?(response)
         return false if response.blank?
 
