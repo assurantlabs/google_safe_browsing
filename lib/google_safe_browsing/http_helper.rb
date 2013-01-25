@@ -33,11 +33,28 @@ module GoogleSafeBrowsing
       end
     end
 
-    def get_lists
-      uri = uri_builder('list')
-      Net::HTTP.get(uri).split("\n")
-    end
+    def self.get_keys
+      uri = URI("#{GoogleSafeBrowsing.config.rekey_host}/newkey#{encoded_params}")
 
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+      request = Net::HTTP::Get.new(uri.request_uri)
+      response = http.request(request)
+      response.body.split("\n").each do |key_line|
+        key_name, _, key_value = key_line.split(':')
+        key_value.gsub!('=', '')
+
+        case key_name
+        when 'clientkey'
+          key_value = KeyHelper::web_safe_base64_decode(key_value)
+          GoogleSafeBrowsing.config.client_key = key_value
+        when 'wrappedkey'
+          GoogleSafeBrowsing.config.wrapped_key = key_value
+        end
+      end
+    end
 
     private
       REKEY_PREFIX = 'e:pleaserekey'
