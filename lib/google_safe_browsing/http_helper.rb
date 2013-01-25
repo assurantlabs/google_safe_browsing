@@ -40,6 +40,8 @@ module GoogleSafeBrowsing
 
 
     private
+      REKEY_PREFIX = 'e:pleaserekey'
+
       def self.encoded_params
         params = "?client=#{GoogleSafeBrowsing.config.client}" <<
         "&apikey=#{GoogleSafeBrowsing.config.api_key}" <<
@@ -60,6 +62,16 @@ module GoogleSafeBrowsing
         data = lines.join("\n") << "\n"
 
         KeyHelper.compute_mac_code(data) == mac
+      end
+
+      def self.please_rekey?(body)
+        if body.split("\n").include? REKEY_PREFIX
+          GoogleSafeBrowsing.config.client_key = nil
+          GoogleSafeBrowsing.config.wrapped_key = nil
+          true
+        else
+          false
+        end
       end
 
       def self.switch_to_https(url)
