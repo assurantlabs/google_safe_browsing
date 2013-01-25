@@ -10,13 +10,15 @@ module GoogleSafeBrowsing
 
     def self.request_full_hashes(hash_array)
       uri = uri_builder('gethash')
-      request = Net::HTTP::Post.new(uri.request_uri)
-      request.body = "4:#{hash_array.length * 4}\n"
-      hash_array.each do |h|
-        request.body << BinaryHelper.hex_to_bin(h[0..7])
-      end
 
-      response = Net::HTTP.start(uri.host) { |http| http.request request }
+      response = post_data(uri) do
+        body = "4:#{hash_array.length * 4}\n"
+        hash_array.each do |h|
+          body << BinaryHelper.hex_to_bin(h[0..7])
+        end
+
+        body
+      end
 
       if response.is_a?(Net::HTTPSuccess) && !response.body.blank?
         ResponseHelper.parse_full_hash_response(response.body)
