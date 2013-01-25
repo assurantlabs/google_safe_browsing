@@ -77,6 +77,15 @@ module GoogleSafeBrowsing
         KeyHelper.compute_mac_code(data) == mac
       end
 
+      def self.post_data(uri)
+        with_keys uri do
+          request = Net::HTTP::Post.new(uri.request_uri)
+          request.body = yield uri
+
+          Net::HTTP.start(uri.host) { |http| http.request request }
+        end
+      end
+
       def self.please_rekey?(body)
         if body.split("\n").include? REKEY_PREFIX
           GoogleSafeBrowsing.config.client_key = nil
