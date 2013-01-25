@@ -51,6 +51,17 @@ module GoogleSafeBrowsing
         params
       end
 
+      def self.valid_mac?(response)
+        return false if response.blank?
+
+        lines = response.split("\n")
+
+        mac = lines.shift[2..-1].chomp
+        data = lines.join("\n") << "\n"
+
+        KeyHelper.compute_mac_code(data) == mac
+      end
+
       def self.switch_to_https(url)
         "https#{url[4..-1]}"
       end
