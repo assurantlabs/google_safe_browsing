@@ -27,10 +27,10 @@ module GoogleSafeBrowsing
 
     def self.get_data(list=nil)
       uri = uri_builder('downloads')
-      request = Net::HTTP::Post.new(uri.request_uri)
-      request.body = ChunkHelper.build_chunk_list(list)
 
-      Net::HTTP.start(uri.host) { |http| http.request request }
+      post_data(uri) do
+        ChunkHelper.build_chunk_list(list)
+      end
     end
 
     def get_lists
