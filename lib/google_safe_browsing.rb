@@ -12,6 +12,8 @@ require  'google_safe_browsing/canonicalize'
 require  'google_safe_browsing/chunk_helper'
 require  'google_safe_browsing/hash_helper'
 require  'google_safe_browsing/http_helper'
+require  'google_safe_browsing/invalid_mac_validation'
+require  'google_safe_browsing/key_helper'
 require  'google_safe_browsing/response_helper'
 require  'google_safe_browsing/top_level_domain'
 
@@ -25,14 +27,21 @@ module GoogleSafeBrowsing
 
   # Handles the configuration values for the module
   class Config
-    attr_accessor :client, :app_ver, :p_ver, :host, :current_lists, :api_key
+    attr_accessor :client, :app_ver, :p_ver, :host, :current_lists, :api_key,
+      :mac_required, :client_key, :wrapped_key, :rekey_host
 
     def initialize
       @client         = 'api'
       @app_ver        = VERSION
       @p_ver          = '2.2'
       @host           = 'http://safebrowsing.clients.google.com/safebrowsing'
+      @rekey_host    = 'https://sb-ssl.google.com/safebrowsing'
       @current_lists  = [ 'googpub-phish-shavar', 'goog-malware-shavar' ]
+      @mac_required   = true
+    end
+
+    def have_keys?
+      @mac_required && @client_key.present? && @wrapped_key.present?
     end
   end
 
