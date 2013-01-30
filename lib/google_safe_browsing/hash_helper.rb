@@ -21,7 +21,6 @@ module GoogleSafeBrowsing
       urls.each do |u|
         hash = ( Digest::SHA256.new << u ).to_s
         hashes << GsbHash.new(hash)
-        #puts "#{u} -- #{hash}"
       end
       hashes
     end

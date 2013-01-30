@@ -18,7 +18,6 @@ module GoogleSafeBrowsing
     end
 
     def self.parse_data_response(response)
-      #print "\n\n#{response}\n\n"
       data_urls = []
       ret = {}
 
@@ -43,18 +42,16 @@ module GoogleSafeBrowsing
         when 'ad'
           # vals[1] is a CHUNKLIST number or range representing add chunks to delete
           # we can also delete the associated Shavar Hashes
-          # we no longer have to report hat we received these chunks
+          # we no longer have to report that we received these chunks
           chunk_number_clause = ChunkHelper.chunklist_to_sql(vals[1])
           AddShavar.delete_all([ "list = ? and (?)", current_list, chunk_number_clause ])
         when 'sd'
           # vals[1] is a CHUNKLIST number or range representing sub chunks to delete
-          # we no longer have to report hat we received these chunks
+          # we no longer have to report that we received these chunks
           chunk_number_clause = ChunkHelper.chunklist_to_sql(vals[1])
           SubShavar.delete_all([ "list = ? and (?)", current_list, chunk_number_clause ])
         end
       end
-
-      #ret[:data_urls] = data_urls
 
       ret
     end
@@ -133,7 +130,6 @@ module GoogleSafeBrowsing
         end
       end
 
-      # actually perform inserts
       while @add_shavar_values && @add_shavar_values.any?
         AddShavar.connection.execute( "insert into gsb_add_shavars (prefix, host_key, chunk_number, list) " +
                                       " values #{@add_shavar_values.pop(10000).map{|v| ActiveRecord::Base::sanitize(v) }.join(', ')}")
@@ -142,7 +138,6 @@ module GoogleSafeBrowsing
       SubShavar.connection.execute( "insert into gsb_sub_shavars (prefix, host_key, add_chunk_number, chunk_number, list) " +
                                     " values #{@sub_shavar_values.pop(10000).map{|v| ActiveRecord::Base::sanitize(v) }.join(', ')}")
       end
-      # remove invalid full_hases
       FullHash.connection.execute("delete from gsb_full_hashes using gsb_full_hashes " +
                                   "inner join  gsb_sub_shavars on " +
                                   "gsb_sub_shavars.add_chunk_number = gsb_full_hashes.add_chunk_number " +
@@ -168,13 +163,6 @@ module GoogleSafeBrowsing
       ret[ :chunk_number ]  = split_line[1].to_i
       ret[ :hash_length ]   = split_line[2].to_i
       ret[ :chunk_length ]  = split_line[3].to_i
-
-      #puts "Chunk ##{s_chunk_count + a_chunk_count}"
-      #puts "Action: #{action}"
-      #puts "Chunk Number: #{split_line[1]}"
-      #puts "Hash Length: #{hash_length}"
-      #puts "Chunk Length: #{chunk_length}"
-      ##puts "Chuch Data:\n#{chunk}\nend"
       ret
     end
   end
