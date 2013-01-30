@@ -10,6 +10,7 @@ It includes:
 * method to lookup a url
 * rake tasks to update hash database
 * Autonomous updating via Resque and Resque Scheduler (optional)
+* Message Authentication Codes (optional; on by default)
 
 ----------------------
 
