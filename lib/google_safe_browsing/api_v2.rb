@@ -5,7 +5,7 @@ module GoogleSafeBrowsing
     #
     # @return (Integer) the number of seconds before this method should be called again
     def self.update
-      HttpHelper.rekey if GoogleSafeBrowsing.config.needs_rekey?
+      HttpHelper.get_keys unless GoogleSafeBrowsing.config.have_keys?
 
       data_response = HttpHelper.get_data
 
