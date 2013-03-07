@@ -21,7 +21,7 @@ module GoogleSafeBrowsing
           order(:chunk_number).uniq.collect{|c| c.chunk_number }
         action_strings << "s:#{squish_number_list(nums)}" if nums.any?
 
-        ret += "#{action_strings.join(':')}\n"
+        ret += "#{action_strings.join(':')}#{":mac" if GoogleSafeBrowsing.config.have_keys?}\n"
       end
 
       ret
