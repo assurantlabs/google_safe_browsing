@@ -81,8 +81,13 @@ module GoogleSafeBrowsing
         end while self.please_rekey?(response.body)
 
         lines = response.body.split("\n")
-        mac = lines.shift[2..-1].chomp
-        data = lines.join("\n") << "\n"
+        mac = lines.shift
+        if mac[0..1] == 'm:'
+          mac = mac[2..-1].chomp
+          data = lines.join("\n") << "\n"
+        else
+          data = lines.join("\n")
+        end
 
         if self.valid_mac?(data, mac)
           response
