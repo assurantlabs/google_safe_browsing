@@ -56,8 +56,19 @@ module GoogleSafeBrowsing
     end
 
     def self.receive_data(url, list)
+      urls = url.split(',')
+      url = urls[0]
+      mac = urls[1]
 
       open(url) do |f|
+        body = f.read
+
+        unless mac.blank? || HttpHelper.valid_mac?(body, mac)
+          raise InvalidMACVerification
+        end
+
+        f.rewind
+
         while(line = f.gets)
           line_actions = parse_data_line(line)
 
