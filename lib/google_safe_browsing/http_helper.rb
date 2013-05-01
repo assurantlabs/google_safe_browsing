@@ -9,6 +9,8 @@ module GoogleSafeBrowsing
     end
 
     def self.request_full_hashes(hash_array)
+      get_keys unless GoogleSafeBrowsing.config.have_keys?
+
       uri = uri_builder('gethash')
 
       response = post_data(uri) do
