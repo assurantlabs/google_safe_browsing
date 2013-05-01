@@ -18,7 +18,6 @@ module GoogleSafeBrowsing
     end
 
     def self.parse_data_response(response)
-      data_urls = []
       ret = {}
 
       ret[:lists] = []
