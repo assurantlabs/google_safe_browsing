@@ -7,9 +7,16 @@ module GoogleSafeBrowsing
       Base64.decode64(str)
     end
 
+    def self.web_safe_base64_encode(str)
+      str = Base64.encode64(str).chomp
+      str.tr('+/', '-_')
+    end
+
     def self.compute_mac_code(data)
-      sha1 = OpenSSL::HMAC.digest('sha1', GoogleSafeBrowsing.config.client_key, data)
-      Base64.encode64(sha1).chomp
+      sha1 = OpenSSL::HMAC.digest('sha1',
+                                  GoogleSafeBrowsing.config.client_key,
+                                  data)
+      web_safe_base64_encode sha1
     end
   end
 end
