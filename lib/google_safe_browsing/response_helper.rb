@@ -175,5 +175,15 @@ module GoogleSafeBrowsing
       ret[ :chunk_length ]  = split_line[3].to_i
       ret
     end
+
+    def self.escape_and_join(values)
+      values.map do |v|
+        ActiveRecord::Base::sanitize(v)
+      end.join(', ')
+    end
+
+    def self.pop_and_join(records)
+      records.pop(5).join(', ')
+    end
   end
 end
