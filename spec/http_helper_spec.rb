@@ -66,7 +66,9 @@ describe GoogleSafeBrowsing::HttpHelper do
       it 'attempts to rekey if no keys are present' do
         GoogleSafeBrowsing.config.client_key = nil
 
-        GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) { OpenStruct.new(get_data_response) }
+        GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
+          OpenStruct.new(get_data_response)
+        end
 
         WebMock.should have_requested(:get, rekey_url)
       end
@@ -86,40 +88,68 @@ describe GoogleSafeBrowsing::HttpHelper do
       it 'throws a InvalidMACValidation error when the mac is invalid' do
 
         -> {
-          GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) { OpenStruct.new(invalid_mac_response) }
+          GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
+            OpenStruct.new(invalid_mac_response)
+          end
         }.should raise_error InvalidMACValidation
       end
     end
 
     describe '.valid_mac?' do
-      it 'returns false when no respose is given' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?('').should be_false
+      let(:expected_mac) { 'f-N8Rs5xq1tPXPdkvY-j7zeL1do=' }
+      let(:correct_data) { 'onetwothree' }
+      let(:incorrect_data) { 'this will not come out correct' }
+
+      it 'invalidates when no MAC is given' do
+        GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, '').
+          should be_false
+      end
+
+      it 'invalidates when no data is given' do
+        GoogleSafeBrowsing::HttpHelper.valid_mac?('', expected_mac).
+          should be_false
+      end
+
+      it 'invalidates when no data or MAC is given' do
+        GoogleSafeBrowsing::HttpHelper.valid_mac?('', '').
+          should be_false
       end
 
       it 'validates a correct MAC based on the client key' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?(get_data_response[:body]).should be_true
+        GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac).
+          should be_true
       end
 
-      it 'returns false when the client key does not match the MAC' do
-        GoogleSafeBrowsing.config.client_key = "this is not a key"
+      it 'invalidates when the client key does not match the computed MAC' do
+        GoogleSafeBrowsing.config.client_key = "this is not the key"
 
-        GoogleSafeBrowsing::HttpHelper.valid_mac?(get_data_response[:body]).should be_false
+        GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac).
+          should be_false
+      end
+
+      it 'invalidates when the provided MAC does not match the computed MAC' do
+        GoogleSafeBrowsing::HttpHelper.valid_mac?(incorrect_data, expected_mac).
+          should be_false
       end
     end
 
     describe '.post_data' do
       it 'accepts a block to compose the request body' do
-        stub_request(:post, api_uri.to_s).to_return(:status => 200, :body => get_data_response[:body], :headers => {})
+        stub_request(:post, api_uri.to_s).to_return(status: 200,
+                                                    body: get_data_response[:body],
+                                                    headers: {})
         expected_body = 'hello'
         GoogleSafeBrowsing::HttpHelper.post_data(api_uri) { expected_body }
 
-        WebMock.should have_requested(:post, api_uri.to_s).with(body: expected_body)
+        WebMock.should have_requested(:post, api_uri.to_s).
+          with(body: expected_body)
       end
     end
 
     describe '.please_rekey?' do
       it 'returns true when the response includes the please rekey directive' do
-        GoogleSafeBrowsing::HttpHelper.please_rekey?(please_rekey_response[:body]).should be_true
+        GoogleSafeBrowsing::HttpHelper.please_rekey?(please_rekey_response[:body]).
+          should be_true
       end
 
       it 'returns false when no rekey directive appears' do

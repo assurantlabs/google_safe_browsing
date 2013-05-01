@@ -78,21 +78,18 @@ module GoogleSafeBrowsing
           response = yield uri
         end while self.please_rekey?(response.body)
 
-        if self.valid_mac?(response.body)
+        lines = response.body.split("\n")
+        mac = lines.shift[2..-1].chomp
+        data = lines.join("\n") << "\n"
+
+        if self.valid_mac?(data, mac)
           response
         else
           raise InvalidMACValidation, "The MAC returned from '#{uri}' is not valid."
         end
       end
 
-      def self.valid_mac?(response)
-        return false if response.blank?
-
-        lines = response.split("\n")
-
-        mac = lines.shift[2..-1].chomp
-        data = lines.join("\n") << "\n"
-
+      def self.valid_mac?(data, mac)
         KeyHelper.compute_mac_code(data) == mac
       end
 

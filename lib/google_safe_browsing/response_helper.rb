@@ -18,7 +18,6 @@ module GoogleSafeBrowsing
     end
 
     def self.parse_data_response(response)
-      data_urls = []
       ret = {}
 
       ret[:lists] = []
@@ -57,8 +56,19 @@ module GoogleSafeBrowsing
     end
 
     def self.receive_data(url, list)
+      urls = url.split(',')
+      url = urls[0]
+      mac = urls[1]
 
       open(url) do |f|
+        body = f.read
+
+        unless mac.blank? || HttpHelper.valid_mac?(body, mac)
+          raise InvalidMACVerification
+        end
+
+        f.rewind
+
         while(line = f.gets)
           line_actions = parse_data_line(line)
 
@@ -131,28 +141,47 @@ module GoogleSafeBrowsing
       end
 
       while @add_shavar_values && @add_shavar_values.any?
-        AddShavar.connection.execute( "insert into gsb_add_shavars (prefix, host_key, chunk_number, list) " +
-                                      " values #{@add_shavar_values.pop(10000).map{|v| ActiveRecord::Base::sanitize(v) }.join(', ')}")
+        AddShavar.connection.execute <<-SQL
+          INSERT INTO gsb_add_shavars (prefix, host_key, chunk_number, list)
+          VALUES #{pop_and_join @add_shavar_values}
+          SQL
       end
       while @sub_shavar_values && @sub_shavar_values.any?
-      SubShavar.connection.execute( "insert into gsb_sub_shavars (prefix, host_key, add_chunk_number, chunk_number, list) " +
-                                    " values #{@sub_shavar_values.pop(10000).map{|v| ActiveRecord::Base::sanitize(v) }.join(', ')}")
+      SubShavar.connection.execute <<-SQL
+        INSERT INTO gsb_sub_shavars (prefix,
+                                     host_key,
+                                     add_chunk_number,
+                                     chunk_number,
+                                     list)
+        VALUES #{pop_and_join @sub_shavar_values}
+        SQL
       end
-      FullHash.connection.execute("delete from gsb_full_hashes using gsb_full_hashes " +
-                                  "inner join  gsb_sub_shavars on " +
-                                  "gsb_sub_shavars.add_chunk_number = gsb_full_hashes.add_chunk_number " +
-                                  "and gsb_sub_shavars.list = gsb_full_hashes.list;")
+
+      FullHash.connection.execute <<-SQL
+        DELETE FROM gsb_full_hashes
+        USING gsb_full_hashes
+        INNER JOIN  gsb_sub_shavars ON
+        gsb_sub_shavars.add_chunk_number = gsb_full_hashes.add_chunk_number
+        AND gsb_sub_shavars.list = gsb_full_hashes.list;
+        SQL
+
       @add_shavar_values = []
       @sub_shavar_values = []
     end
 
     def self.record_add_shavar_to_insert(h)
       @add_shavar_values ||= []
-      @add_shavar_values << "('#{h[:prefix]}', '#{h[:host_key]}', '#{h[:chunk_number]}', '#{h[:list]}')"
+      values = [ h[:prefix], h[:host_key], h[:chunk_number], h[:list] ]
+      @add_shavar_values << "(#{escape_and_join values})"
     end
     def self.record_sub_shavar_to_insert(h)
       @sub_shavar_values ||= []
-      @sub_shavar_values << "('#{h[:prefix]}', '#{h[:host_key]}', '#{h[:add_chunk_number]}', '#{h[:chunk_number]}', '#{h[:list]}')"
+      values = [ h[:prefix],
+                 h[:host_key],
+                 h[:add_chunk_number],
+                 h[:chunk_number],
+                 h[:list] ]
+      @sub_shavar_values << "(#{escape_and_join values})"
     end
 
     def self.parse_data_line(line)
@@ -164,6 +193,16 @@ module GoogleSafeBrowsing
       ret[ :hash_length ]   = split_line[2].to_i
       ret[ :chunk_length ]  = split_line[3].to_i
       ret
+    end
+
+    def self.escape_and_join(values)
+      values.map do |v|
+        ActiveRecord::Base::sanitize(v)
+      end.join(', ')
+    end
+
+    def self.pop_and_join(records)
+      records.pop(5).join(', ')
     end
   end
 end
