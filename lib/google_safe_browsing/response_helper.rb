@@ -141,17 +141,30 @@ module GoogleSafeBrowsing
       end
 
       while @add_shavar_values && @add_shavar_values.any?
-        AddShavar.connection.execute( "insert into gsb_add_shavars (prefix, host_key, chunk_number, list) " +
-                                      " values #{@add_shavar_values.pop(10000).map{|v| ActiveRecord::Base::sanitize(v) }.join(', ')}")
+        AddShavar.connection.execute <<-SQL
+          INSERT INTO gsb_add_shavars (prefix, host_key, chunk_number, list)
+          VALUES #{pop_and_join @add_shavar_values}
+          SQL
       end
       while @sub_shavar_values && @sub_shavar_values.any?
-      SubShavar.connection.execute( "insert into gsb_sub_shavars (prefix, host_key, add_chunk_number, chunk_number, list) " +
-                                    " values #{@sub_shavar_values.pop(10000).map{|v| ActiveRecord::Base::sanitize(v) }.join(', ')}")
+      SubShavar.connection.execute <<-SQL
+        INSERT INTO gsb_sub_shavars (prefix,
+                                     host_key,
+                                     add_chunk_number,
+                                     chunk_number,
+                                     list)
+        VALUES #{pop_and_join @sub_shavar_values}
+        SQL
       end
-      FullHash.connection.execute("delete from gsb_full_hashes using gsb_full_hashes " +
-                                  "inner join  gsb_sub_shavars on " +
-                                  "gsb_sub_shavars.add_chunk_number = gsb_full_hashes.add_chunk_number " +
-                                  "and gsb_sub_shavars.list = gsb_full_hashes.list;")
+
+      FullHash.connection.execute <<-SQL
+        DELETE FROM gsb_full_hashes
+        USING gsb_full_hashes
+        INNER JOIN  gsb_sub_shavars ON
+        gsb_sub_shavars.add_chunk_number = gsb_full_hashes.add_chunk_number
+        AND gsb_sub_shavars.list = gsb_full_hashes.list;
+        SQL
+
       @add_shavar_values = []
       @sub_shavar_values = []
     end
