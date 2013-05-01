@@ -66,7 +66,9 @@ describe GoogleSafeBrowsing::HttpHelper do
       it 'attempts to rekey if no keys are present' do
         GoogleSafeBrowsing.config.client_key = nil
 
-        GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) { OpenStruct.new(get_data_response) }
+        GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
+          OpenStruct.new(get_data_response)
+        end
 
         WebMock.should have_requested(:get, rekey_url)
       end
@@ -86,7 +88,9 @@ describe GoogleSafeBrowsing::HttpHelper do
       it 'throws a InvalidMACValidation error when the mac is invalid' do
 
         -> {
-          GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) { OpenStruct.new(invalid_mac_response) }
+          GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
+            OpenStruct.new(invalid_mac_response)
+          end
         }.should raise_error InvalidMACValidation
       end
     end
@@ -109,17 +113,21 @@ describe GoogleSafeBrowsing::HttpHelper do
 
     describe '.post_data' do
       it 'accepts a block to compose the request body' do
-        stub_request(:post, api_uri.to_s).to_return(:status => 200, :body => get_data_response[:body], :headers => {})
+        stub_request(:post, api_uri.to_s).to_return(status: 200,
+                                                    body: get_data_response[:body],
+                                                    headers: {})
         expected_body = 'hello'
         GoogleSafeBrowsing::HttpHelper.post_data(api_uri) { expected_body }
 
-        WebMock.should have_requested(:post, api_uri.to_s).with(body: expected_body)
+        WebMock.should have_requested(:post, api_uri.to_s).
+          with(body: expected_body)
       end
     end
 
     describe '.please_rekey?' do
       it 'returns true when the response includes the please rekey directive' do
-        GoogleSafeBrowsing::HttpHelper.please_rekey?(please_rekey_response[:body]).should be_true
+        GoogleSafeBrowsing::HttpHelper.please_rekey?(please_rekey_response[:body]).
+          should be_true
       end
 
       it 'returns false when no rekey directive appears' do
