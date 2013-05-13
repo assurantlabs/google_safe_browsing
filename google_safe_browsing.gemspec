@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = GoogleSafeBrowsing::VERSION
   s.authors     = 'Chris Marshall'
   s.email       = 'chris@chrismar035.com'
-  s.homepage    = "https://github.com/mobiledefense/mobiledefense_google_safe_browsing"
+  s.homepage    = "https://github.com/mobiledefense/google_safe_browsing"
   s.summary     = "Rails 3 plugin for Google's Safe Browsing API v2"
   s.description = "Rails 3 plugin using Google's Safe Browsing API for url lookup against Malware and Phishing " +
     "blacklists. Implementation includes storing and updating locally stored shavar lists and url lookup methods."
