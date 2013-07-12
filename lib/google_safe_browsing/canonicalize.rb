@@ -15,6 +15,9 @@ module GoogleSafeBrowsing
     # @return (String) canonicalized url string
     def self.url(raw_url)
       raw_url = raw_url.to_s
+      
+      # Change encoding from UTF-8 to ASCII-8BIT to avoid InvalidByteSequenceError
+      raw_url = raw_url.force_encoding("ASCII-8BIT")
 
       #remove tabs, carriage returns and line feeds
       raw_url.gsub!("\t",'')
