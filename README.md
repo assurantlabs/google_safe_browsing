@@ -89,7 +89,7 @@ If you'd like to join us, we'd love to have you. When contributing please
 1. [Fork](https://github.com/mobiledefense/google_safe_browsing/fork) the repo
 1. Start a topic branch.
 1. Write awesome code!
-   1. Please break your commits are broken into logical units.
+   1. Please break your commits into logical units.
    1. Please add specs when necessary.
 1. Open a [Pull Request](https://github.com/mobiledefense/google_safe_browsing/pulls)
 1. Make sure [Travis CI](https://travis-ci.org/mobiledefense/google_safe_browsing)
