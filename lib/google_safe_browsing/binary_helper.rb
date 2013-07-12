@@ -25,6 +25,8 @@ module GoogleSafeBrowsing
     # @param (see read_bytes_as_hex)
     # @return (String) not unpacked string from `iter`
     def self.read_bytes_from(iter, count)
+      iter = iter.to_enum if iter.is_a?(Array)
+
       ret = ''
       count.to_i.times { ret << iter.next }
       ret
