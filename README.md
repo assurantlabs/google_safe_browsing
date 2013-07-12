@@ -80,6 +80,38 @@ which the url appears on, or `nil` if the url is not on Google's list.
 
 ----------------
 
+## Contributing
+
+We've already had some [great
+contributers](https://github.com/mobiledefense/google_safe_browsing/graphs/contributors).
+If you'd like to join us, we'd love to have you. When contributing please
+
+1. [fork](https://github.com/mobiledefense/google_safe_browsing/fork) the repo
+1. Start a topic branch.
+1. Write awesome code!
+1. Please break your commits are broken into logical units.
+1. Please add specs when necessary.
+1. Open a [Pull Request](https://github.com/mobiledefense/google_safe_browsing/pulls)
+1. Make sure [Travis CI](https://travis-ci.org/mobiledefense/google_safe_browsing)
+   builds the PR successfully.
+1. See your awesomeness merged in!
+
+### Running specs
+
+We use [Rspec](http://rspec.info/) for unit testing. You can run the specs with
+the following command:
+
+    bundle exec rake
+
+Or individual specs/files:
+
+    bundle exec rspec spec/chunk_helper_spec.rb:10
+
+
+Thanks for helping us make browsing safer!
+
+----------------
+
 ### More information
 
 [Google Safe Browsing API Reference](http://code.google.com/apis/safebrowsing/)
