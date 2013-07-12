@@ -84,7 +84,7 @@ module GoogleSafeBrowsing
             if line_actions[:chunk_length] == 0
               record_add_shavar_to_insert(add_attrs)
             else
-              chunk_iterator = chunk.bytes
+              chunk_iterator = chunk.bytes.to_enum
               counter = 0
               begin
                 while true
@@ -110,7 +110,7 @@ module GoogleSafeBrowsing
             if line_actions[:chunk_length] == 0
               record_sub_shavar_to_insert(sub_attrs)
             else
-              chunk_iterator = chunk.bytes
+              chunk_iterator = chunk.bytes.to_enum
               counter = 0
               begin
                 while true
