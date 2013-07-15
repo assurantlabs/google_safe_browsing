@@ -28,33 +28,19 @@ module GoogleSafeBrowsing
       urls = Canonicalize.urls_for_lookup(url.force_encoding('ASCII-8BIT'))
       return nil if urls.empty?
 
-      hashes = HashHelper.urls_to_hashes(urls)
-      raw_hash_array = hashes.collect{ |h| h.to_s }
+      gsb_hashes = HashHelper.urls_to_gsb_hashes(urls)
+      lookup_gsb_hashes(gsb_hashes)
+    end
 
-      if full = FullHash.where(:full_hash => raw_hash_array).first
-        return GoogleSafeBrowsing.friendly_list_name(full.list)
-      end
+    # Performs a lookup of the given SHA256 url hashes
+    #
+    # @param (Array) SHA256 url hashes array to be looked up
+    # @return (String, nil) the friendly list name if found, or 'nil'
+    def self.lookup_url_hashes(raw_hashes)
+      return nil if raw_hashes.empty?
 
-      hits =  AddShavar.where(:prefix => hashes.map{|h| h.prefix}).collect{ |s| [ s.list, s.prefix ] }
-      safes = SubShavar.where(:prefix => hashes.map{|h| h.prefix}).collect{ |s| [ s.list, s.prefix ] }
-
-      reals = hits - safes
-
-      if reals.any?
-        full_hashes = HttpHelper.request_full_hashes(reals.collect{|r| r[1] })
-
-        # save hashes first
-        # cannot return early because all FullHashes need to be saved
-        hit_list = nil
-        full_hashes.each do |hash|
-          FullHash.create!(:list => hash[:list], :add_chunk_number => hash[:add_chunk_num],
-                                       :full_hash => hash[:full_hash])
-
-          hit_list = hash[:list] if raw_hash_array.include?(hash[:full_hash])
-        end
-        return GoogleSafeBrowsing.friendly_list_name(hit_list)
-      end
-      nil
+      gsb_hashes = HashHelper.raw_to_gsb_hashes(raw_hashes)
+      lookup_gsb_hashes(gsb_hashes)
     end
 
     # Can be used to force a delay into a script running updates
@@ -70,5 +56,48 @@ module GoogleSafeBrowsing
       end
       puts "Thank you for being patient"
     end
+
+    private
+
+      def self.lookup_gsb_hashes(gsb_hashes)
+        raw_hash_array = gsb_hashes.map(&:to_s)
+        full_hash_hits = FullHash.where(full_hash: raw_hash_array).first
+
+        if full_hash_hits
+          return GoogleSafeBrowsing.friendly_list_name(full_hash_hits.list)
+        end
+
+        prefixes_needing_lookup = unsafe_prefixes(gsb_hashes) - safe_prefixes(gsb_hashes)
+
+        return lookup_prefixes(prefixes_needing_lookup) if prefixes_needing_lookup.any?
+        return nil
+      end
+
+      def self.unsafe_prefixes(gsb_hashes)
+        prefixes = gsb_hashes.map { |h| h.prefix }
+        AddShavar.where(prefix: prefixes).map { |s| [ s.list, s.prefix ] }
+      end
+
+      def self.safe_prefixes(gsb_hashes)
+        prefixes = gsb_hashes.map { |h| h.prefix }
+        SubShavar.where(prefix: prefixes).map { |s| [ s.list, s.prefix ] }
+      end
+
+      def self.lookup_prefixes(prefixes)
+        full_hashes = HttpHelper.request_full_hashes(prefixes.map { |p| p[1] })
+
+        # save hashes first
+        # cannot return early because all FullHashes need to be saved
+        hit_list = nil
+        full_hashes.each do |hash|
+          FullHash.create!(list: hash[:list],
+                           add_chunk_number: hash[:add_chunk_num],
+                           full_hash: hash[:full_hash])
+
+          hit_list = hash[:list] if raw_hash_array.include?(hash[:full_hash])
+        end
+
+        GoogleSafeBrowsing.friendly_list_name(hit_list)
+      end
   end
 end
