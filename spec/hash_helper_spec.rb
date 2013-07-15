@@ -20,8 +20,8 @@ describe GoogleSafeBrowsing::HashHelper do
 
   describe 'converting an array of url strings to an array of GsbHashes' do
     input = [ 'malware.test.org', 'mobiledefense.com', 'also.this.domain' ]
-    GoogleSafeBrowsing::HashHelper.urls_to_hashes(input).each do |expected|
-      expected.class.should== GoogleSafeBrowsing::HashHelper::GsbHash
+    GoogleSafeBrowsing::HashHelper.urls_to_gsb_hashes(input).each do |hash|
+      specify { expect(hash.class).to eq GoogleSafeBrowsing::HashHelper::GsbHash }
     end
   end
 
