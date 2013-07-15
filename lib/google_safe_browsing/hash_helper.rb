@@ -24,5 +24,9 @@ module GoogleSafeBrowsing
       end
       hashes
     end
+
+    def self.raw_to_gsb_hashes(raw_hashes)
+      raw_hashes.map { |raw_hash| GsbHash.new(raw_hash) }
+    end
   end
 end
