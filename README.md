@@ -8,6 +8,7 @@ It includes:
 * a migration generator for database schema
 * method to update hash database
 * method to lookup a url
+* method to lookup SHA256 url hashes
 * rake tasks to update hash database
 * Autonomous updating via Resque and Resque Scheduler (optional)
 * Message Authentication Codes (optional; on by default)
@@ -75,8 +76,14 @@ The url string parameter does not have to be any specific format or Canonicaliza
 Safe Browsing gem will handle all of that for you. Please report any errors from a weirdly formatted 
 url though. I most likely have missed some cases.
 
-The `lookup` method returns a string ( either 'malware' or 'phishing' ) for the name of the black list
-which the url appears on, or `nil` if the url is not on Google's list.
+To check url (SHA256) hashes for badness
+```
+url_hashes = [ '52d3df0ed60c46f336c131bf2ca454f73bafdc4b04dfa2aea80746f5ba9e6d1c',
+               '999f7d93aa3d4a1a94cccfb4ea96bc2e28fd48020a481aa2dc7e215f3ce27bc0']
+GoogleSafeBrowsing::APIv2.lookup_url_hashes(url_hashes)
+```
+
+The `lookup` and `lookup_url_hashes` methods return a string ( either `malware` or `phishing` ) for the name of the black list which the url appears on, or `nil` if the url is not on Google's list.
 
 ----------------
 
