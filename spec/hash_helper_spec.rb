@@ -24,5 +24,15 @@ describe GoogleSafeBrowsing::HashHelper do
       expected.class.should== GoogleSafeBrowsing::HashHelper::GsbHash
     end
   end
+
+  describe 'converting an array of raw hashes to an array of GsbHashes' do
+    input = [ '0015e260740a3963c724be95f966c6063077979c',
+              '001717460c5ba78085eee9b7ed58bec94759e4c8',
+              '001fa1574a73e9a8481e26df2aa6104eb2406b57'
+            ]
+    GoogleSafeBrowsing::HashHelper.raw_to_gsb_hashes(input).each do |hash|
+      specify { expect(hash.class).to eq GoogleSafeBrowsing::HashHelper::GsbHash }
+    end
+  end
 end
 
