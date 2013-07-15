@@ -3,18 +3,20 @@ require 'spec_helper'
 describe GoogleSafeBrowsing::HashHelper do
   describe GoogleSafeBrowsing::HashHelper::GsbHash do
     it 'should take a hash string upon instantiation' do
-      lambda { GoogleSafeBrowsing::HashHelper::GsbHash.new('123456') }.should_not raise_error
+      expect { GoogleSafeBrowsing::HashHelper::GsbHash.new('123456') }.not_to raise_error
     end
 
     it 'should return the first 8 characters as the prefix' do
       hash = '1234567891011'
       prefix = hash[0..7]
-      GoogleSafeBrowsing::HashHelper::GsbHash.new(hash).prefix.should== prefix
+      gsb_hash = GoogleSafeBrowsing::HashHelper::GsbHash.new(hash)
+      expect(gsb_hash.prefix).to eq prefix
     end
 
-    it 'should retrun the whole hash on string conversion' do
+    it 'should return the whole hash on string conversion' do
       hash = '1234567891011'
-      "#{ GoogleSafeBrowsing::HashHelper::GsbHash.new(hash) }".should== hash
+      gsb_hash = GoogleSafeBrowsing::HashHelper::GsbHash.new(hash)
+      expect("#{gsb_hash}").to eq hash
     end
   end
 
@@ -35,4 +37,3 @@ describe GoogleSafeBrowsing::HashHelper do
     end
   end
 end
-
