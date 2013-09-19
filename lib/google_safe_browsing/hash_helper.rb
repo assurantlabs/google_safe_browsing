@@ -16,13 +16,15 @@ module GoogleSafeBrowsing
 
     end
 
-    def self.urls_to_hashes(urls)
-      hashes = []
-      urls.each do |u|
-        hash = ( Digest::SHA256.new << u ).to_s
-        hashes << GsbHash.new(hash)
+    def self.urls_to_gsb_hashes(urls)
+      urls.map do |url|
+        raw_hash = Digest::SHA256.new << url
+        GsbHash.new(raw_hash.to_s)
       end
-      hashes
+    end
+
+    def self.raw_to_gsb_hashes(raw_hashes)
+      raw_hashes.map { |raw_hash| GsbHash.new(raw_hash) }
     end
   end
 end

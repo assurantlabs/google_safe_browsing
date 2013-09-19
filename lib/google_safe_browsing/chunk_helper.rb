@@ -18,7 +18,7 @@ module GoogleSafeBrowsing
         action_strings << "a:#{squish_number_list(nums)}" if nums.any?
 
         nums = GoogleSafeBrowsing::SubShavar.select('distinct chunk_number').where(:list => list).
-          order(:chunk_number).uniq.collect{|c| c.chunk_number }
+          order(:chunk_number).collect{|c| c.chunk_number }
         action_strings << "s:#{squish_number_list(nums)}" if nums.any?
 
         ret += "#{action_strings.join(':')}#{":mac" if GoogleSafeBrowsing.config.have_keys?}\n"
