@@ -33,7 +33,7 @@ describe GoogleSafeBrowsing::HashHelper do
               '001fa1574a73e9a8481e26df2aa6104eb2406b57'
             ]
     GoogleSafeBrowsing::HashHelper.raw_to_gsb_hashes(input).each do |hash|
-      specify { expect(hash.class).to eq GoogleSafeBrowsing::HashHelper::GsbHash }
+      specify { expect(hash).to be_a GoogleSafeBrowsing::HashHelper::GsbHash }
     end
   end
 end
