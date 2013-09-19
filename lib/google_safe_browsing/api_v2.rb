@@ -74,13 +74,16 @@ module GoogleSafeBrowsing
       end
 
       def self.unsafe_prefixes(gsb_hashes)
-        prefixes = gsb_hashes.map { |h| h.prefix }
-        AddShavar.where(prefix: prefixes).map { |s| [ s.list, s.prefix ] }
+        get_prefix_list(AddShavar, gsb_hashes)
       end
 
       def self.safe_prefixes(gsb_hashes)
+        get_prefix_list(SubShavar, gsb_hashes)
+      end
+
+      def self.get_prefix_list(klass, gsb_hashes)
         prefixes = gsb_hashes.map { |h| h.prefix }
-        SubShavar.where(prefix: prefixes).map { |s| [ s.list, s.prefix ] }
+        klass.where(prefix: prefixes).map { |s| [ s.list, s.prefix ] }
       end
 
       def self.lookup_prefixes(prefixes)
