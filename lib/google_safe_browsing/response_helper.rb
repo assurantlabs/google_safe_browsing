@@ -157,13 +157,7 @@ module GoogleSafeBrowsing
         SQL
       end
 
-      FullHash.connection.execute <<-SQL
-        DELETE FROM gsb_full_hashes
-        USING gsb_full_hashes
-        INNER JOIN  gsb_sub_shavars ON
-        gsb_sub_shavars.add_chunk_number = gsb_full_hashes.add_chunk_number
-        AND gsb_sub_shavars.list = gsb_full_hashes.list;
-        SQL
+      FullHash.delete_subbed
 
       @add_shavar_values = []
       @sub_shavar_values = []
