@@ -3,7 +3,8 @@
 This gem allows easy Google Safe Browsing APIv2 usage with optional integration
 into Rails 3 apps.
 
-[![Build Status](https://travis-ci.org/mobiledefense/google_safe_browsing.png)](https://travis-ci.org//mobiledefense/google_safe_browsing)
+[![Build
+Status](https://travis-ci.org/mobiledefense/google_safe_browsing.png)](https://travis-ci.org//mobiledefense/google_safe_browsing)
 
 It includes:
 
@@ -38,7 +39,8 @@ Then, generate the migration and run it
 
 
 Add your Google Safe Browsing API key to congif/application.rb
-You can get a key from the [Google Safe Browsing website](http://code.google.com/apis/safebrowsing/key_signup.html)
+You can get a key from the [Google
+Safe Browsing website](http://code.google.com/apis/safebrowsing/key_signup.html)
 
     #config/application.rb
 
@@ -58,10 +60,10 @@ You can run an update manually
   updates. You will know that you have the full database when an update does
   not return any new Add or Sub Shavars.
 
-Or, if you have [Resque](https://github.com/defunkt/resque) and 
-[Resque Scheduler](https://github.com/bvandenbos/resque-scheduler) set up, you can 
-run an update and automatically schedule another update based on the 'next polling 
-interval' parameter from the API
+Or, if you have [Resque](https://github.com/defunkt/resque) and
+[Resque Scheduler](https://github.com/bvandenbos/resque-scheduler) set up, you
+can run an update and automatically schedule another update based on the 'next
+polling interval' parameter from the API
 
     $ rake google_safe_browsing:update_and_reschedule
 
@@ -71,19 +73,21 @@ To programatically run an update in your app
 
     GoogleSafeBrowsing::APIv2.update
 
-Note: This can take a while, especially when first seeding your database. I wouldn't recommend
-calling this in a controller for a normal page request.
+Note: This can take a while, especially when first seeding your database. I
+wouldn't recommend calling this in a controller for a normal page request.
 
 To check a url for badness
 
     GoogleSafeBrowsing::APIv2.lookup('http://bad.url.address.here.com.edu/forProfit')
 
-The url string parameter does not have to be any specific format or Canonicalization the Google
-Safe Browsing gem will handle all of that for you. Please report any errors from a weirdly formatted 
-url though. I most likely have missed some cases.
+The url string parameter does not have to be any specific format or
+Canonicalization the Google Safe Browsing gem will handle all of that for you.
+Please report any errors from a weirdly formatted url though. I most likely
+have missed some cases.
 
-The `lookup` method returns a string ( either 'malware' or 'phishing' ) for the name of the black list
-which the url appears on, or `nil` if the url is not on Google's list.
+The `lookup` method returns a string ( either 'malware' or 'phishing' ) for
+the name of the black list which the url appears on, or `nil` if the url is
+not on Google's list.
 
 ----------------
 
@@ -98,8 +102,10 @@ If you'd like to join us, we'd love to have you. When contributing please
 1. Write awesome code!
    1. Please break your commits into logical units.
    1. Please add specs when necessary.
-1. Open a [Pull Request](https://github.com/mobiledefense/google_safe_browsing/pulls)
-1. Make sure [Travis CI](https://travis-ci.org/mobiledefense/google_safe_browsing)
+1. Open a [Pull
+   Request](https://github.com/mobiledefense/google_safe_browsing/pulls)
+1. Make sure [Travis
+   CI](https://travis-ci.org/mobiledefense/google_safe_browsing)
    builds the PR successfully.
 1. See your awesomeness merged in!
 
