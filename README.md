@@ -53,6 +53,11 @@ You can run an update manually
 
     $ rake google_safe_browsing:update
 
+> Note: The full database is not guarenteed to be returned after a single update.
+  In fact, you aren't likely to have the full database even after several
+  updates. You will know that you have the full database when an update does
+  not return any new Add or Sub Shavars.
+
 Or, if you have [Resque](https://github.com/defunkt/resque) and 
 [Resque Scheduler](https://github.com/bvandenbos/resque-scheduler) set up, you can 
 run an update and automatically schedule another update based on the 'next polling 
