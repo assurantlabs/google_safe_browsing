@@ -34,4 +34,3 @@ describe GoogleSafeBrowsing::ChunkHelper do
     end
   end
 end
-
