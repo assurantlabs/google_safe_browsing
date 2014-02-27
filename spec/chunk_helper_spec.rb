@@ -25,12 +25,4 @@ describe GoogleSafeBrowsing::ChunkHelper do
       GoogleSafeBrowsing::ChunkHelper.squish_number_list(@number_array).should== @expected
     end
   end
-
-  describe 'converting a chunklist to a SQL clause' do
-    it 'should take a chunklist formatted string and return the sql to return those records' do
-      @chunklist = "1-10,15-18,21,24"
-      @expected  = "chunk_number between 1 and 10 or chunk_number between 15 and 18 or chunk_number = 21 or chunk_number = 24"
-      GoogleSafeBrowsing::ChunkHelper.chunklist_to_sql(@chunklist).should== @expected
-    end
-  end
 end

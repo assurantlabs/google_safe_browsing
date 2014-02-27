@@ -55,19 +55,5 @@ module GoogleSafeBrowsing
 
       num_strings.join(',')
     end
-
-    def self.chunklist_to_sql(chunk_list)
-      ret_array = []
-      chunk_list.split(',').each do |s|
-        if s.index('-')
-          range = s.split('-')
-          ret_array << "chunk_number between #{range[0]} and #{range[1]}"
-        else
-          ret_array << "chunk_number = #{s}"
-        end
-      end
-      ret_array.join(" or ")
-    end
-
   end
 end
