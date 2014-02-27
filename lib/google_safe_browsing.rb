@@ -17,6 +17,7 @@ require  'google_safe_browsing/key_helper'
 require  'google_safe_browsing/response_helper'
 require  'google_safe_browsing/top_level_domain'
 
+require  'google_safe_browsing/shavar'
 require  'google_safe_browsing/add_shavar'
 require  'google_safe_browsing/sub_shavar'
 require  'google_safe_browsing/full_hash'
