@@ -1,5 +1,5 @@
 module GoogleSafeBrowsing
-  class AddShavar < ActiveRecord::Base
+  class AddShavar < Shavar
     self.table_name = 'gsb_add_shavars'
   end
 end
