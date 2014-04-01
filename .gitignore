@@ -7,3 +7,4 @@ spec/dummy/tmp/
 tmp/
 .yardoc/
 .ruby-version
+coverage/
