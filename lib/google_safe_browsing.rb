@@ -26,7 +26,6 @@ require  'google_safe_browsing/full_hash'
 require  'google_safe_browsing/rescheduler'
 
 module GoogleSafeBrowsing
-
   # Handles the configuration values for the module
   class Config
     attr_accessor :client, :app_ver, :p_ver, :host, :current_lists, :api_key,
@@ -37,8 +36,8 @@ module GoogleSafeBrowsing
       @app_ver        = VERSION
       @p_ver          = '2.2'
       @host           = 'http://safebrowsing.clients.google.com/safebrowsing'
-      @rekey_host    = 'https://sb-ssl.google.com/safebrowsing'
-      @current_lists  = [ 'googpub-phish-shavar', 'goog-malware-shavar' ]
+      @rekey_host     = 'https://sb-ssl.google.com/safebrowsing'
+      @current_lists  = ['googpub-phish-shavar', 'goog-malware-shavar']
       @mac_required   = true
     end
 
@@ -61,7 +60,6 @@ module GoogleSafeBrowsing
   def self.kick_off
     Resque.enqueue(Rescheduler)
   end
-
 
   # Converts the official Google list name into the name to return
   #
