@@ -10,6 +10,7 @@ require  'google_safe_browsing/api_v2'
 require  'google_safe_browsing/binary_helper'
 require  'google_safe_browsing/canonicalize'
 require  'google_safe_browsing/chunk_helper'
+require  'google_safe_browsing/chunk_list'
 require  'google_safe_browsing/hash_helper'
 require  'google_safe_browsing/http_helper'
 require  'google_safe_browsing/invalid_mac_validation'
@@ -17,6 +18,7 @@ require  'google_safe_browsing/key_helper'
 require  'google_safe_browsing/response_helper'
 require  'google_safe_browsing/top_level_domain'
 
+require  'google_safe_browsing/shavar'
 require  'google_safe_browsing/add_shavar'
 require  'google_safe_browsing/sub_shavar'
 require  'google_safe_browsing/full_hash'
@@ -24,7 +26,6 @@ require  'google_safe_browsing/full_hash'
 require  'google_safe_browsing/rescheduler'
 
 module GoogleSafeBrowsing
-
   # Handles the configuration values for the module
   class Config
     attr_accessor :client, :app_ver, :p_ver, :host, :current_lists, :api_key,
@@ -35,8 +36,8 @@ module GoogleSafeBrowsing
       @app_ver        = VERSION
       @p_ver          = '2.2'
       @host           = 'http://safebrowsing.clients.google.com/safebrowsing'
-      @rekey_host    = 'https://sb-ssl.google.com/safebrowsing'
-      @current_lists  = [ 'googpub-phish-shavar', 'goog-malware-shavar' ]
+      @rekey_host     = 'https://sb-ssl.google.com/safebrowsing'
+      @current_lists  = ['googpub-phish-shavar', 'goog-malware-shavar']
       @mac_required   = true
     end
 
@@ -59,7 +60,6 @@ module GoogleSafeBrowsing
   def self.kick_off
     Resque.enqueue(Rescheduler)
   end
-
 
   # Converts the official Google list name into the name to return
   #
