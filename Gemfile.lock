@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    google_safe_browsing (0.6.0)
+    google_safe_browsing (0.6.1)
       activerecord
-      rails (~> 3.2.0)
+      rails
       ruby-ip
 
 GEM
