@@ -7,6 +7,8 @@ into Rails 3 apps.
 Status](https://travis-ci.org/mobiledefense/google_safe_browsing.png)](https://travis-ci.org/mobiledefense/google_safe_browsing)
 [![Code
 Climate](https://codeclimate.com/github/mobiledefense/google_safe_browsing.png)](https://codeclimate.com/github/mobiledefense/google_safe_browsing)
+[![PullReview
+stats](https://www.pullreview.com/github/mobiledefense/google_safe_browsing/badges/master.svg?)](https://www.pullreview.com/github/mobiledefense/google_safe_browsing/reviews/master)
 
 It includes:
 
