@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.2
+
+  * Fix undefined methods when deleting shavar chunks
+
+  Thanks to Alin Irimie for
+  [reporting](https://github.com/mobiledefense/google_safe_browsing/issues/15).
+
 ## v0.6.1
 
   * Fix PostgreSQL syntax when deleting shavars
