@@ -19,6 +19,7 @@ module GoogleSafeBrowsing
           body << BinaryHelper.hex_to_bin(h[0..7])
         end
 
+
         body
       end
 
@@ -80,6 +81,8 @@ module GoogleSafeBrowsing
           response = yield uri
         end while self.please_rekey?(response.body)
 
+        return unless response.body
+
         lines = response.body.split("\n")
         mac = lines.shift
         if mac[0..1] == 'm:'
@@ -110,7 +113,7 @@ module GoogleSafeBrowsing
       end
 
       def self.please_rekey?(body)
-        if body.split("\n").include? REKEY_PREFIX
+        if body.to_s.split("\n").include? REKEY_PREFIX
           GoogleSafeBrowsing.config.client_key = nil
           GoogleSafeBrowsing.config.wrapped_key = nil
           true
