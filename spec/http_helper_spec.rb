@@ -1,12 +1,14 @@
 require 'spec_helper'
 require 'ostruct'
 
+class StubResponse < Struct.new(:body); end
+
 describe GoogleSafeBrowsing::HttpHelper do
   let(:encoded_params) { "?client=api&apikey=#{GoogleSafeBrowsing.config.api_key}&appver=#{GoogleSafeBrowsing.config.app_ver}&pver=2.2" }
   let(:rekey_url) { "https://sb-ssl.google.com/safebrowsing/newkey#{encoded_params}" }
   before(:each) do
     set_keys
-    stub_request(:get, rekey_url).to_return(get_keys_response)
+    stub_request(:get, rekey_url).to_return(body: get_keys_response)
   end
 
   describe '.uri_builder' do
@@ -36,7 +38,7 @@ describe GoogleSafeBrowsing::HttpHelper do
 
     it 'executes a post to Google' do
       GoogleSafeBrowsing.config.mac_required = false
-      stub_request(:post, api_url).to_return(get_data_response)
+      stub_request(:post, api_url).to_return(body: get_data_response)
 
       GoogleSafeBrowsing::HttpHelper.get_data
 
@@ -67,7 +69,7 @@ describe GoogleSafeBrowsing::HttpHelper do
         GoogleSafeBrowsing.config.client_key = nil
 
         GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
-          OpenStruct.new(get_data_response)
+          StubResponse.new(get_data_response)
         end
 
         WebMock.should have_requested(:get, rekey_url)
@@ -80,7 +82,7 @@ describe GoogleSafeBrowsing::HttpHelper do
       end
 
       it 'returns the response if the mac is valid' do
-        expected_response = OpenStruct.new(get_data_response)
+        expected_response = StubResponse.new(get_data_response)
         GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) { expected_response }.
           should == expected_response
       end
@@ -89,7 +91,7 @@ describe GoogleSafeBrowsing::HttpHelper do
 
         -> {
           GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
-            OpenStruct.new(invalid_mac_response)
+            StubResponse.new(invalid_mac_response)
           end
         }.should raise_error InvalidMACValidation
       end
@@ -136,7 +138,7 @@ describe GoogleSafeBrowsing::HttpHelper do
     describe '.post_data' do
       it 'accepts a block to compose the request body' do
         stub_request(:post, api_uri.to_s).to_return(status: 200,
-                                                    body: get_data_response[:body],
+                                                    body: get_data_response,
                                                     headers: {})
         expected_body = 'hello'
         GoogleSafeBrowsing::HttpHelper.post_data(api_uri) { expected_body }
@@ -148,12 +150,12 @@ describe GoogleSafeBrowsing::HttpHelper do
 
     describe '.please_rekey?' do
       it 'returns true when the response includes the please rekey directive' do
-        GoogleSafeBrowsing::HttpHelper.please_rekey?(please_rekey_response[:body]).
+        GoogleSafeBrowsing::HttpHelper.please_rekey?(please_rekey_response).
           should be_true
       end
 
       it 'returns false when no rekey directive appears' do
-        GoogleSafeBrowsing::HttpHelper.please_rekey?(get_data_response[:body]).should be_false
+        GoogleSafeBrowsing::HttpHelper.please_rekey?(get_data_response).should be_false
       end
     end
 
@@ -165,19 +167,19 @@ describe GoogleSafeBrowsing::HttpHelper do
   end
 
   def get_data_response
-    { body: File.read("#{File.dirname(__FILE__)}/responses/get_data_body.txt") }
+    File.read("#{File.dirname(__FILE__)}/responses/get_data_body.txt")
   end
 
   def get_keys_response
-    { body: "clientkey:16:#{client_key}\nwrappedkey:24:MTqdJvrixHRGAyfebvaQWYda" }
+    "clientkey:16:#{client_key}\nwrappedkey:24:MTqdJvrixHRGAyfebvaQWYda"
   end
 
   def invalid_mac_response
-    { body: "m:234wewerf===\nu:mobiledefense.com" }
+    "m:234wewerf===\nu:mobiledefense.com"
   end
 
   def please_rekey_response
-    { body: "e:pleaserekey\nm:other_data_to_ignore" }
+    "e:pleaserekey\nm:other_data_to_ignore"
   end
 
   def client_key
@@ -194,7 +196,7 @@ describe GoogleSafeBrowsing::HttpHelper do
                  get_data_response
                end
 
-    OpenStruct.new(response)
+    StubResponse.new(response)
   end
 
   def set_keys
