@@ -2,6 +2,13 @@
 
 ## v0.6.2
 
+  * Handle Full Hash requests which return a 204.  This is expected behavior if
+  the local database is not updated and prefixes have been delted, a request
+  for full hashes will return a 204.
+
+  Thanks to Alin Irimie for
+  [reporting](https://github.com/mobiledefense/google_safe_browsing/issues/16).
+
   * Fix undefined methods when deleting shavar chunks
 
   Thanks to Alin Irimie for
