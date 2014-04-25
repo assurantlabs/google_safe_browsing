@@ -95,6 +95,16 @@ describe GoogleSafeBrowsing::HttpHelper do
           end
         }.should raise_error InvalidMACValidation
       end
+
+      context 'when the response is no content' do
+        it 'is nil' do
+          expect(
+            GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
+              StubResponse.new(nil)
+            end
+          ).to be_nil
+        end
+      end
     end
 
     describe '.valid_mac?' do
