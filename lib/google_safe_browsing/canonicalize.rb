@@ -15,8 +15,9 @@ module GoogleSafeBrowsing
     # @return (String) canonicalized url string
     def self.url(raw_url)
       raw_url = raw_url.to_s
-      
-      # Change encoding from UTF-8 to ASCII-8BIT to avoid InvalidByteSequenceError
+
+      # Change encoding from UTF-8 to ASCII-8BIT to avoid
+      # InvalidByteSequenceError
       raw_url = raw_url.force_encoding("ASCII-8BIT")
 
       #remove tabs, carriage returns and line feeds
@@ -67,7 +68,7 @@ module GoogleSafeBrowsing
 
       host_strings = [host_string]
       host = TopLevelDomain.split_from_host(host_string).last(5)
-      ( host.length - 1 ).times do 
+      ( host.length - 1 ).times do
         host_strings << host.join('.')
         host.shift
       end
@@ -123,7 +124,8 @@ module GoogleSafeBrowsing
       end
     end
 
-    # Returns the cartesian product of two arrays by concatination of the string representation of the elements
+    # Returns the cartesian product of two arrays by concatination of the
+    # string representation of the elements
     #
     # @param (Array) a_one array of strings
     # @param (Array) a_two array of strings
@@ -153,7 +155,8 @@ module GoogleSafeBrowsing
       ret
     end
 
-    # Strips the fragment portion of the url string (the last '#' and everything after)
+    # Strips the fragment portion of the url string (the last '#' and
+    # everything after)
     #
     # @param (String) string url
     # @return (String) parameter with the fragment removed
@@ -167,7 +170,7 @@ module GoogleSafeBrowsing
     # @param (String) url url string
     # @return (String) fully unescaped url string
     def self.recursively_unescape(url)
-      compare_url = url.clone 
+      compare_url = url.clone
       url = URI.unescape(url)
       while(compare_url != url)
         compare_url = url.clone
@@ -193,7 +196,7 @@ module GoogleSafeBrowsing
         host_splits[:host] = IP::V4.new(host.to_i).to_addr
       elsif host_splits[:host] =~ /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
         begin
-          host_splits[:host] = IP.new(host).to_addr 
+          host_splits[:host] = IP.new(host).to_addr
         rescue ArgumentError
         end
       end

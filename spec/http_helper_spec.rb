@@ -113,23 +113,23 @@ describe GoogleSafeBrowsing::HttpHelper do
       let(:incorrect_data) { 'this will not come out correct' }
 
       it 'invalidates when no MAC is given' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, '').
-          should be_false
+        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, '')).to \
+          be_false
       end
 
       it 'invalidates when no data is given' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?('', expected_mac).
-          should be_false
+        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?('', expected_mac)).to \
+          be_false
       end
 
       it 'invalidates when no data or MAC is given' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?('', '').
-          should be_false
+        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?('', '')).to be_false
       end
 
       it 'validates a correct MAC based on the client key' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac).
-          should be_true
+        expect(
+          GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac)
+        ).to be_true
       end
 
       it 'invalidates when the client key does not match the computed MAC' do
