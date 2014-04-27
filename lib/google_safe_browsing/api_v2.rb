@@ -13,7 +13,7 @@ module GoogleSafeBrowsing
 
       to_do_array[:lists].each do |list|
         to_do_array[:data_urls][list].each do |url|
-          puts "#{list} - #{url}\n"
+          GoogleSafeBrowsing.logger.info "#{list} - #{url}\n"
           ResponseHelper.receive_data('http://' + url, list)
         end
       end
@@ -60,14 +60,16 @@ module GoogleSafeBrowsing
     #
     # @param (Integer) delay_seconds the number of seconds to delay, should be the return value of {update}
     def self.delay(delay_seconds)
-      puts "Google told us to wait for #{delay_seconds} seconds"
-      puts "We will wait...."
+      GoogleSafeBrowsing.logger.info \
+        "Google told us to wait for #{delay_seconds} seconds"
+      GoogleSafeBrowsing.logger.info "We will wait...."
       start_time = Time.now
       while(start_time + delay_seconds > Time.now)
-          puts "#{(delay_seconds - (Time.now - start_time)).to_i}..."
+          GoogleSafeBrowsing.logger.info \
+            "#{(delay_seconds - (Time.now - start_time)).to_i}..."
           sleep(10)
       end
-      puts "Thank you for being patient"
+      GoogleSafeBrowsing.logger.info "Thank you for being patient"
     end
   end
 end

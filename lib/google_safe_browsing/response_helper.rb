@@ -102,7 +102,10 @@ module GoogleSafeBrowsing
                   counter += 1
                 end
               rescue StopIteration
-                puts "Added #{counter} host_keys for add chunk number #{line_actions[:chunk_number]}"
+                GoogleSafeBrowsing.logger.info <<-LOG.gsub(/\n\s*/, '')
+                  Added #{counter} host_keys for add chunk number
+                  #{line_actions[:chunk_number]}
+                  LOG
               end
             end
           when 's'
@@ -130,11 +133,16 @@ module GoogleSafeBrowsing
                   counter += 1
                 end
               rescue StopIteration
-                puts "Added #{counter} host_keys for sub chunk number #{line_actions[:chunk_number]}"
+                GoogleSafeBrowsing.logger.info <<-LOG.gsub(/\n\s*/, '')
+                  Added #{counter} host_keys for sub chunk number
+                  #{line_actions[:chunk_number]}
+                LOG
               end
             end
           else
-            puts "neither a nor s ======================================================="
+            GoogleSafeBrowsing.logger.info <<-LOG.gsub(/\n\s*/, '')
+              neither a nor s =================================================
+            LOG
           end
 
         end

@@ -181,7 +181,6 @@ module GoogleSafeBrowsing
     # @param (String) host host string
     # @return (String) standardized host string
     def self.fix_host(host)
-      #puts "In Host: #{host}"
       # remove leading and trailing dots, multiple dots to one
       host.gsub!(/\A\.+|\.+\Z/, '')
       host.gsub!(/\.+/, '.')
@@ -210,8 +209,6 @@ module GoogleSafeBrowsing
     # @param (String) path path string
     # @return (String) standardized path string
     def self.fix_path(path)
-      #puts "In Path: #{path}"
-
       #remove leading slash
       path = path[1..-1] if path[0..0] == '/'
 

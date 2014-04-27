@@ -30,9 +30,6 @@ module GoogleSafeBrowsing
       ret = ''
       count.to_i.times { ret << iter.next }
       ret
-   #rescue
-   #  puts "Tried to read past chunk iterator++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-   #  return nil
     end
 
     # Returns the first four bytes of `string` as hexidecimal; for host key
