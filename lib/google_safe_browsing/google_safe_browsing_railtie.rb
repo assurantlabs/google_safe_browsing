@@ -15,5 +15,9 @@ module GoogleSafeBrowsing
         config.api_key = app.config.google_safe_browsing[:api_key]
       end
     end
+
+    initializer 'Rails logger' do
+      GoogleSafeBrowsing.logger = Rails.logger
+    end
   end
 end
