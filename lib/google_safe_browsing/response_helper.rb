@@ -49,6 +49,9 @@ module GoogleSafeBrowsing
           # we no longer have to report that we received these chunks
           SubShavar.delete_chunks_from_list(current_list,
                                             ChunkList.new(vals[1]))
+        else
+          GoogleSafeBrowsing.logger.warn \
+            "Unknown data response directive: #{vals[0]}"
         end
       end
 
