@@ -161,7 +161,7 @@ module GoogleSafeBrowsing
     def self.recursively_unescape(url)
       compare_url = url.clone
       url = URI.unescape(url)
-      while(compare_url != url)
+      until compare_url == url
         compare_url = url.clone
         url = URI.unescape(url)
       end

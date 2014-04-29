@@ -66,7 +66,7 @@ module GoogleSafeBrowsing
         "Google told us to wait for #{delay_seconds} seconds"
       GoogleSafeBrowsing.logger.info "We will wait...."
       start_time = Time.now
-      while(start_time + delay_seconds > Time.now)
+      until start_time + delay_seconds <= Time.now
           GoogleSafeBrowsing.logger.info \
             "#{(delay_seconds - (Time.now - start_time)).to_i}..."
           sleep(10)
