@@ -28,7 +28,7 @@ describe GoogleSafeBrowsing::ChunkHelper do
                        21,
                        24]
       @expected = "1-10,15-18,21,24"
-      GoogleSafeBrowsing::ChunkHelper.squish_number_list(@number_array).should== @expected
+      GoogleSafeBrowsing::ChunkHelper.squish_number_list(@number_array).should eq @expected
     end
   end
 end

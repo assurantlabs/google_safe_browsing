@@ -12,7 +12,7 @@ describe GoogleSafeBrowsing::ResponseHelper do
       test_line = "#{expected[:action]}:#{expected[:chunk_number]}:" +
         "#{expected[:hash_length]}:#{expected[:chunk_length]}\n"
 
-        GoogleSafeBrowsing::ResponseHelper.parse_data_line(test_line).should== expected
+        GoogleSafeBrowsing::ResponseHelper.parse_data_line(test_line).should eq expected
     end
   end
 
@@ -36,7 +36,7 @@ describe GoogleSafeBrowsing::ResponseHelper do
           test_data += "u:#{url}\n"
         end
       end
-      GoogleSafeBrowsing::ResponseHelper::parse_data_response(test_data).should== expected
+      GoogleSafeBrowsing::ResponseHelper::parse_data_response(test_data).should eq expected
     end
 
     context 'with chunks to delete' do

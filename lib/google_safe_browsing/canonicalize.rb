@@ -141,11 +141,11 @@ module GoogleSafeBrowsing
     # @param (String) cann canonicalized url string
     # @return (Hash) !{ :host => host_part, :path => path_part }
     def self.split_host_path(cann)
-      ret= { :host => cann, :path => '' }
+      ret = { host: cann, path: '' }
       split_point = cann.index('/')
       if split_point
-        ret[:host] = cann[0..split_point-1]
-        ret[:path] = cann[split_point+1..-1]
+        ret[:host] = cann[0..split_point - 1]
+        ret[:path] = cann[(split_point + 1)..-1]
       end
 
       ret
@@ -157,7 +157,7 @@ module GoogleSafeBrowsing
     # @param (String) string url
     # @return (String) parameter with the fragment removed
     def self.remove_fragment(string)
-      string = string[0..string.index('#')-1] if string.index('#')
+      string = string[0..(string.index('#') - 1)] if string.index('#')
       string
     end
 
@@ -216,7 +216,7 @@ module GoogleSafeBrowsing
       if path.index('?')
         first_ques = path.index('?')
         params = path[first_ques..-1]
-        path = path[0..first_ques-1]
+        path = path[0..(first_ques - 1)]
       end
 
       # remove multiple '/'
@@ -255,7 +255,7 @@ module GoogleSafeBrowsing
     def self.remove_protocol(cann)
       if cann.index(PROTOCOL_DELIMITER)
         delimiting_index = cann.index(PROTOCOL_DELIMITER)
-        @protocol = cann[0..delimiting_index-1]
+        @protocol = cann[0..(delimiting_index - 1)]
         protocol_end_index = delimiting_index + PROTOCOL_DELIMITER.length
         cann = cann[protocol_end_index..-1]
       end
