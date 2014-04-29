@@ -133,7 +133,7 @@ describe GoogleSafeBrowsing::HttpHelper do
       end
 
       it 'invalidates when the client key does not match the computed MAC' do
-        GoogleSafeBrowsing.config.client_key = "this is not the key"
+        GoogleSafeBrowsing.config.client_key = 'this is not the key'
 
         GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac).
           should be_false
@@ -193,7 +193,7 @@ describe GoogleSafeBrowsing::HttpHelper do
   end
 
   def client_key
-    "Y2xpZW50IGtleQ=="
+    'Y2xpZW50IGtleQ=='
   end
 
   $first_time ||= true

@@ -64,14 +64,14 @@ module GoogleSafeBrowsing
     def self.delay(delay_seconds)
       GoogleSafeBrowsing.logger.info \
         "Google told us to wait for #{delay_seconds} seconds"
-      GoogleSafeBrowsing.logger.info "We will wait...."
+      GoogleSafeBrowsing.logger.info 'We will wait....'
       start_time = Time.now
       until start_time + delay_seconds <= Time.now
           GoogleSafeBrowsing.logger.info \
             "#{(delay_seconds - (Time.now - start_time)).to_i}..."
           sleep(10)
       end
-      GoogleSafeBrowsing.logger.info "Thank you for being patient"
+      GoogleSafeBrowsing.logger.info 'Thank you for being patient'
     end
   end
 end
