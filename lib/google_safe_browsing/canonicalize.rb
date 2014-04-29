@@ -38,7 +38,7 @@ module GoogleSafeBrowsing
       # split into host and path components
       splits = split_host_path(cann)
 
-      cann = fix_host( splits[:host] ) + '/' + fix_path( splits[:path] )
+      cann = fix_host(splits[:host]) + '/' + fix_path(splits[:path])
 
       # add leading protocol
       @protocol ||= DEFAULT_PROTOCOL
@@ -67,7 +67,7 @@ module GoogleSafeBrowsing
 
       host_strings = [host_string]
       host = TopLevelDomain.split_from_host(host_string).last(5)
-      ( host.length - 1 ).times do
+      (host.length - 1).times do
         host_strings << host.join('.')
         host.shift
       end
@@ -211,7 +211,7 @@ module GoogleSafeBrowsing
       # remove leading slash
       path = path[1..-1] if path[0..0] == '/'
 
-      preserve_trailing_slash = ( path[-1..-1] == '/' )
+      preserve_trailing_slash = (path[-1..-1] == '/')
 
       if path.index('?')
         first_ques = path.index('?')
