@@ -25,4 +25,3 @@ describe GoogleSafeBrowsing::HashHelper do
     end
   end
 end
-

@@ -5,7 +5,6 @@ require File.dirname(__FILE__) + '/top_level_domain.rb'
 module GoogleSafeBrowsing
   # Helpers to Canonicalize urls and generate url permutations for lookups
   class Canonicalize
-
     PROTOCOL_DELIMITER = '://'
     DEFAULT_PROTOCOL = 'http'
 
@@ -79,8 +78,6 @@ module GoogleSafeBrowsing
       cart_prod(host_strings, path_strings)
     end
 
-    # private
-
     # Generates the path permutations from the raw path string
     #
     # @param (String) raw_path path split from the full url string
@@ -91,7 +88,6 @@ module GoogleSafeBrowsing
       path_split = raw_path.split('?')
       path = path_split[0] || ''
       params = path_split[1] || ''
-
 
       path_components = path.split('/').first(3)
       path_strings = [ '/' ]
