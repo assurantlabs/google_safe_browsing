@@ -23,7 +23,10 @@ describe GoogleSafeBrowsing::ChunkHelper do
 
   describe 'squishing number lists' do
     it 'should take an array and return the continuous blocks' do
-      @number_array = [1,2,3,4,5,6,7,8,9,10,15,16,17,18,21,24]
+      @number_array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                       15, 16, 17, 18,
+                       21,
+                       24]
       @expected = "1-10,15-18,21,24"
       GoogleSafeBrowsing::ChunkHelper.squish_number_list(@number_array).should== @expected
     end

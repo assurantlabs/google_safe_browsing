@@ -20,9 +20,9 @@ module GoogleSafeBrowsing
       raw_url = raw_url.force_encoding("ASCII-8BIT")
 
       # remove tabs, carriage returns and line feeds
-      raw_url.gsub!("\t",'')
-      raw_url.gsub!("\r",'')
-      raw_url.gsub!("\n",'')
+      raw_url.gsub!("\t", '')
+      raw_url.gsub!("\r", '')
+      raw_url.gsub!("\n", '')
 
       cann = raw_url.clone
       cann.gsub!(/\A\s+|\s+\Z/, '')
@@ -243,7 +243,7 @@ module GoogleSafeBrowsing
       url = URI.escape url
 
       # unescape carat, may need other optionally escapeable chars
-      url.gsub!('%5E','^')
+      url.gsub!('%5E', '^')
 
       url
     end
