@@ -207,7 +207,7 @@ module GoogleSafeBrowsing
     end
 
     def self.pop_and_join(records)
-      records.pop(10000).join(', ')
+      records.pop(10_000).join(', ')
     end
   end
 end
