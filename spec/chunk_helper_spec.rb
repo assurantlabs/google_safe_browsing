@@ -15,7 +15,7 @@ describe GoogleSafeBrowsing::ChunkHelper do
         GoogleSafeBrowsing::ChunkHelper.build_chunk_list.
           should eq GoogleSafeBrowsing.config
                                       .current_lists
-                                      .map{ |l| "#{l};\n" }
+                                      .map { |l| "#{l};\n" }
                                       .join
       end
     end

@@ -34,8 +34,8 @@ module GoogleSafeBrowsing
       full = FullHash.where(full_hash: raw_hash_array).first
       return GoogleSafeBrowsing.friendly_list_name(full.list) if full
 
-      hits =  AddShavar.where(prefix: hashes.map{ |h| h.prefix }).map{ |s| [s.list, s.prefix] }
-      safes = SubShavar.where(prefix: hashes.map{ |h| h.prefix }).map{ |s| [s.list, s.prefix] }
+      hits =  AddShavar.where(prefix: hashes.map { |h| h.prefix }).map { |s| [s.list, s.prefix] }
+      safes = SubShavar.where(prefix: hashes.map { |h| h.prefix }).map { |s| [s.list, s.prefix] }
 
       reals = hits - safes
 

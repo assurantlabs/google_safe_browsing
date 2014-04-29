@@ -103,7 +103,7 @@ module GoogleSafeBrowsing
           p
         end
       end
-      path_strings.map!{ |p| p.to_s.gsub!(/\/+/, '/') }
+      path_strings.map! { |p| p.to_s.gsub!(/\/+/, '/') }
       path_strings.compact!
       path_strings.uniq!
 
