@@ -19,7 +19,7 @@ module GoogleSafeBrowsing
       # InvalidByteSequenceError
       raw_url = raw_url.force_encoding("ASCII-8BIT")
 
-      #remove tabs, carriage returns and line feeds
+      # remove tabs, carriage returns and line feeds
       raw_url.gsub!("\t",'')
       raw_url.gsub!("\r",'')
       raw_url.gsub!("\n",'')
@@ -35,7 +35,7 @@ module GoogleSafeBrowsing
       # remove leading PROTOCOL
       cann = remove_protocol(cann)
 
-      #split into host and path components
+      # split into host and path components
       splits = split_host_path(cann)
 
       cann = fix_host( splits[:host] ) + '/' + fix_path( splits[:path] )
@@ -53,7 +53,7 @@ module GoogleSafeBrowsing
     # @return (Array) array of cannonicalized url permutation strings
     def self.urls_for_lookup(lookup_url)
       lookup_url = url(lookup_url)
-      #return empty array if url returns nil; for invalid url
+      # return empty array if url returns nil; for invalid url
       return [] if lookup_url.blank?
 
       lookup_url = remove_protocol(lookup_url)
@@ -62,7 +62,7 @@ module GoogleSafeBrowsing
 
       host_string = strip_username_password_and_port_from_host(splits[:host])
 
-      #return empty array unless host_string has at least one period
+      # return empty array unless host_string has at least one period
       return [] unless host_string.include?('.')
 
       host_strings = [host_string]
@@ -208,7 +208,7 @@ module GoogleSafeBrowsing
     # @param (String) path path string
     # @return (String) standardized path string
     def self.fix_path(path)
-      #remove leading slash
+      # remove leading slash
       path = path[1..-1] if path[0..0] == '/'
 
       preserve_trailing_slash = ( path[-1..-1] == '/' )
