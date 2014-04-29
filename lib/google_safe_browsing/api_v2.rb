@@ -29,7 +29,7 @@ module GoogleSafeBrowsing
       return nil if urls.empty?
 
       hashes = HashHelper.urls_to_hashes(urls)
-      raw_hash_array = hashes.collect{ |h| h.to_s }
+      raw_hash_array = hashes.map { |h| h.to_s }
 
       full = FullHash.where(full_hash: raw_hash_array).first
       return GoogleSafeBrowsing.friendly_list_name(full.list) if full
