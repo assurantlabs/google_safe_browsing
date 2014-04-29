@@ -13,7 +13,10 @@ describe GoogleSafeBrowsing::ChunkHelper do
 
       it 'should build the current defaults if no lists given' do
         GoogleSafeBrowsing::ChunkHelper.build_chunk_list.
-          should eq GoogleSafeBrowsing.config.current_lists.map{|l| "#{l};\n"}.join
+          should eq GoogleSafeBrowsing.config
+                                      .current_lists
+                                      .map{ |l| "#{l};\n" }
+                                      .join
       end
     end
   end
