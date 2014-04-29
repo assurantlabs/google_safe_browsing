@@ -91,7 +91,7 @@ describe GoogleSafeBrowsing::Canonicalize do
     it 'should split a url into host and path components' do
       host = 'test.com'
       path = 'test/path/components.html'
-      joined = { :host => host, :path => path }
+      joined = { host: host, path: path }
       expect(
         GoogleSafeBrowsing::Canonicalize.split_host_path(host + '/' + path)
       ).to eq joined

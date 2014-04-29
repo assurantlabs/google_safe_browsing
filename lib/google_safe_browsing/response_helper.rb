@@ -78,9 +78,11 @@ module GoogleSafeBrowsing
           chunk  = f.read(line_actions[:chunk_length])
           # f iterator is now set for next chunk
 
-          add_attrs = { :chunk_number => line_actions[:chunk_number],
-                    :list => list, :prefix => nil, :host_key => nil
-                  }
+          add_attrs = { chunk_number: line_actions[:chunk_number],
+                        list: list,
+                        prefix: nil,
+                        host_key: nil
+                      }
 
           case line_actions[:action]
           when 'a'
@@ -112,7 +114,7 @@ module GoogleSafeBrowsing
               end
             end
           when 's'
-            sub_attrs = add_attrs.merge({ :add_chunk_number => nil })
+            sub_attrs = add_attrs.merge({ add_chunk_number: nil })
             if line_actions[:chunk_length] == 0
               record_sub_shavar_to_insert(sub_attrs)
             else

@@ -132,7 +132,7 @@ module GoogleSafeBrowsing
     # Takes the canonicalized url and splits the host and the path apart
     #
     # @param (String) cann canonicalized url string
-    # @return (Hash) !{ :host => host_part, :path => path_part }
+    # @return (Hash) !{ host: host_part, path: path_part }
     def self.split_host_path(cann)
       ret = { host: cann, path: '' }
       split_point = cann.index('/')
