@@ -40,33 +40,32 @@ describe GoogleSafeBrowsing::Canonicalize do
   describe "urls for lookup method" do
     it "should returns an array of URLs for hashing and lookup from url with params" do
       url = 'http://a.b.c/1/2.html?param=1'
-      urls = [ 'a.b.c/1/2.html?param=1',
-               'a.b.c/1/2.html',
-               'a.b.c/',
-               'a.b.c/1/',
-               'b.c/1/2.html?param=1',
-               'b.c/1/2.html',
-               'b.c/',
-               'b.c/1/'
-             ]
+      urls = ['a.b.c/1/2.html?param=1',
+              'a.b.c/1/2.html',
+              'a.b.c/',
+              'a.b.c/1/',
+              'b.c/1/2.html?param=1',
+              'b.c/1/2.html',
+              'b.c/',
+              'b.c/1/']
+
       GoogleSafeBrowsing::Canonicalize.urls_for_lookup(url).sort.
         should== urls.sort
     end
 
     it "should returns an array of URLs for hashing and lookup from url with many hosts" do
       url = 'a.b.c.d.e.f.g/1.html'
-      urls = [
-        'a.b.c.d.e.f.g/1.html',
-        'a.b.c.d.e.f.g/',
-        'c.d.e.f.g/1.html',
-        'c.d.e.f.g/',
-        'd.e.f.g/1.html',
-        'd.e.f.g/',
-        'e.f.g/1.html',
-        'e.f.g/',
-        'f.g/1.html',
-        'f.g/'
-      ]
+      urls = ['a.b.c.d.e.f.g/1.html',
+              'a.b.c.d.e.f.g/',
+              'c.d.e.f.g/1.html',
+              'c.d.e.f.g/',
+              'd.e.f.g/1.html',
+              'd.e.f.g/',
+              'e.f.g/1.html',
+              'e.f.g/',
+              'f.g/1.html',
+              'f.g/']
+
       GoogleSafeBrowsing::Canonicalize.urls_for_lookup(url).sort.
         should== urls.sort
     end
@@ -74,11 +73,11 @@ describe GoogleSafeBrowsing::Canonicalize do
 
   describe "cart_prod method" do
     it "should return the cartesian product of two arrays with concatination" do
-      verbs = [ 'jump', 'climb', 'surf' ]
-      suffixes = [ 's', 'ed', 'ing' ]
-      cart = [ 'jumps', 'jumped', 'jumping',
-               'climbs', 'climbed', 'climbing',
-               'surfs', 'surfed', 'surfing' ]
+      verbs = ['jump', 'climb', 'surf']
+      suffixes = ['s', 'ed', 'ing']
+      cart = ['jumps', 'jumped', 'jumping',
+              'climbs', 'climbed', 'climbing',
+              'surfs', 'surfed', 'surfing']
       GoogleSafeBrowsing::Canonicalize.cart_prod(verbs, suffixes).
         should== cart
     end

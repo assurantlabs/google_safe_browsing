@@ -176,16 +176,16 @@ module GoogleSafeBrowsing
 
     def self.record_add_shavar_to_insert(h)
       @add_shavar_values ||= []
-      values = [ h[:prefix], h[:host_key], h[:chunk_number], h[:list] ]
+      values = [h[:prefix], h[:host_key], h[:chunk_number], h[:list]]
       @add_shavar_values << "(#{escape_and_join values})"
     end
     def self.record_sub_shavar_to_insert(h)
       @sub_shavar_values ||= []
-      values = [ h[:prefix],
-                 h[:host_key],
-                 h[:add_chunk_number],
-                 h[:chunk_number],
-                 h[:list] ]
+      values = [h[:prefix],
+                h[:host_key],
+                h[:add_chunk_number],
+                h[:chunk_number],
+                h[:list]]
       @sub_shavar_values << "(#{escape_and_join values})"
     end
 
@@ -193,10 +193,10 @@ module GoogleSafeBrowsing
       split_line = line.split(':')
 
       ret = {}
-      ret[ :action ]        = split_line[0]
-      ret[ :chunk_number ]  = split_line[1].to_i
-      ret[ :hash_length ]   = split_line[2].to_i
-      ret[ :chunk_length ]  = split_line[3].to_i
+      ret[:action]        = split_line[0]
+      ret[:chunk_number]  = split_line[1].to_i
+      ret[:hash_length]   = split_line[2].to_i
+      ret[:chunk_length]  = split_line[3].to_i
       ret
     end
 

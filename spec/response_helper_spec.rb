@@ -20,7 +20,7 @@ describe GoogleSafeBrowsing::ResponseHelper do
     it 'should parse a multiline string into a hash containing delay seconds and data redirect urls' do
       expected = {}
       expected[:delay_seconds] = 60
-      expected[:lists] = [ 'googpub-phish-shavar', 'goog-malware-shavar' ]
+      expected[:lists] = ['googpub-phish-shavar', 'goog-malware-shavar']
       expected[:data_urls] = Hash.new()
       expected[:data_urls]['googpub-phish-shavar'] = []
       expected[:data_urls]['googpub-phish-shavar'] << 'example.com/1234'

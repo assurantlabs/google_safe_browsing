@@ -83,14 +83,14 @@ module GoogleSafeBrowsing
     # @param (String) raw_path path split from the full url string
     # @return (Array) array of path permutation strings
     def self.generate_path_strings(raw_path)
-      return [ '/', '' ] if raw_path == ''
+      return ['/', ''] if raw_path == ''
 
       path_split = raw_path.split('?')
       path = path_split[0] || ''
       params = path_split[1] || ''
 
       path_components = path.split('/').first(3)
-      path_strings = [ '/' ]
+      path_strings = ['/']
       path_components.length.times do
         path_strings << '/' + path_components.join('/')
         path_components.pop
