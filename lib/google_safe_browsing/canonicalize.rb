@@ -97,26 +97,19 @@ module GoogleSafeBrowsing
       end
 
       path_strings.map! do |p|
-        unless p.index('.')
-          p + '/'
-        else
+        if p.index('.')
           p
+        else
+          p + '/'
         end
       end
       path_strings.map! { |p| p.to_s.gsub!(/\/+/, '/') }
       path_strings.compact!
       path_strings.uniq!
 
-      unless params.blank?
-        path_strings | path_strings.map do |p|
-          if p[-1] == '/'
-            p
-          else
-            "#{p}?#{params}"
-          end
-        end
-      else
-        return path_strings
+      return path_strings if params.blank?
+      path_strings | path_strings.map do |p|
+        p[-1] == '/' ?  p : "#{p}?#{params}"
       end
     end
 
