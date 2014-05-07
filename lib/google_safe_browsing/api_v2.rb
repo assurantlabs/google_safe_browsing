@@ -31,9 +31,8 @@ module GoogleSafeBrowsing
       hashes = HashHelper.urls_to_hashes(urls)
       raw_hash_array = hashes.collect{ |h| h.to_s }
 
-      if full = FullHash.where(:full_hash => raw_hash_array).first
-        return GoogleSafeBrowsing.friendly_list_name(full.list)
-      end
+      full = FullHash.where(full_hash: raw_hash_array).first
+      return GoogleSafeBrowsing.friendly_list_name(full.list) if full
 
       hits =  AddShavar.where(:prefix => hashes.map{|h| h.prefix}).collect{ |s| [ s.list, s.prefix ] }
       safes = SubShavar.where(:prefix => hashes.map{|h| h.prefix}).collect{ |s| [ s.list, s.prefix ] }
