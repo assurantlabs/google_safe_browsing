@@ -88,12 +88,11 @@ describe GoogleSafeBrowsing::HttpHelper do
       end
 
       it 'throws a InvalidMACValidation error when the mac is invalid' do
-
-        -> {
+        expect do
           GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
             StubResponse.new(invalid_mac_response)
           end
-        }.should raise_error InvalidMACValidation
+        end.to raise_error InvalidMACValidation
       end
 
       context 'when the response is no content' do
