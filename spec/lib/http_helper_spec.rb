@@ -177,7 +177,10 @@ describe GoogleSafeBrowsing::HttpHelper do
   end
 
   def get_data_response
-    File.read("#{File.dirname(__FILE__)}/responses/get_data_body.txt")
+    File.read(File.join(File.dirname(__FILE__),
+                        '..',
+                        'responses',
+                        'get_data_body.txt'))
   end
 
   def get_keys_response
