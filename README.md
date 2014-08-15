@@ -95,6 +95,15 @@ not on Google's list.
 
 ----------------
 
+## Versioning
+
+Starting with 3.0.0,` google_safe_browsing` is in major/minor version sync with
+the Google Safe Brwosing protocol. Patch level versions will be releases with
+bug fixes. For example, `google_safe_browsing` v3.0.x will be compatible with
+Google Safe Browsing 3.0.
+
+----------------
+
 ## Contributing
 
 We've already had some [great
