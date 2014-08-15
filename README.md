@@ -1,7 +1,7 @@
 # Google Safe Browsing Gem
 
-This gem allows easy Google Safe Browsing APIv2 usage with optional integration
-into Rails 3 apps.
+This gem allows easy Google Safe Browsing APIv3 usage with optional integration
+into Rails 3/4 apps.
 
 [![Build
 Status](https://travis-ci.org/mobiledefense/google_safe_browsing.png)](https://travis-ci.org/mobiledefense/google_safe_browsing)
@@ -13,11 +13,10 @@ stats](https://www.pullreview.com/github/mobiledefense/google_safe_browsing/badg
 It includes:
 
 * a migration generator for database schema
-* method to update hash database
+* method to update local hash database
 * method to lookup a url
-* rake tasks to update hash database
+* rake tasks to update local hash database
 * Autonomous updating via Resque and Resque Scheduler (optional)
-* Message Authentication Codes (optional; on by default)
 
 ----------------------
 
