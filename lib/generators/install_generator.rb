@@ -19,7 +19,8 @@ module GoogleSafeBrowsing
     end
 
     def create_migration_files
-      migration_template 'create_google_safe_browsing_tables.rb', "db/migrate/create_google_safe_browsing_tables"
+      migration_template 'create_google_safe_browsing_tables.rb',
+                         'db/migrate/create_google_safe_browsing_tables.rb'
     end
   end
 end
