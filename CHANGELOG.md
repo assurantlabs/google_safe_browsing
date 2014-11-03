@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.3
+
+  * Fix no extension on generated migration in Rails 4.
+
+  Thanks to Eric Fiterman for
+  [reporting](https://github.com/mobiledefense/google_safe_browsing/issues/18).
+
 ## v0.6.2
 
   * Handle Full Hash requests which return a 204.  This is expected behavior if
