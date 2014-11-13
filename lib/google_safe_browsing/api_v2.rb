@@ -13,7 +13,7 @@ module GoogleSafeBrowsing
 
       to_do_array[:lists].each do |list|
         to_do_array[:data_urls][list].each do |url|
-          puts "#{list} - #{url}\n"
+          GoogleSafeBrowsing.logger.info "#{list} - #{url}\n"
           ResponseHelper.receive_data('http://' + url, list)
         end
       end
@@ -29,26 +29,26 @@ module GoogleSafeBrowsing
       return nil if urls.empty?
 
       hashes = HashHelper.urls_to_hashes(urls)
-      raw_hash_array = hashes.collect{ |h| h.to_s }
+      raw_hash_array = hashes.map { |h| h.to_s }
 
-      if full = FullHash.where(:full_hash => raw_hash_array).first
-        return GoogleSafeBrowsing.friendly_list_name(full.list)
-      end
+      full = FullHash.where(full_hash: raw_hash_array).first
+      return GoogleSafeBrowsing.friendly_list_name(full.list) if full
 
-      hits =  AddShavar.where(:prefix => hashes.map{|h| h.prefix}).collect{ |s| [ s.list, s.prefix ] }
-      safes = SubShavar.where(:prefix => hashes.map{|h| h.prefix}).collect{ |s| [ s.list, s.prefix ] }
+      hits =  AddShavar.where(prefix: hashes.map { |h| h.prefix }).map { |s| [s.list, s.prefix] }
+      safes = SubShavar.where(prefix: hashes.map { |h| h.prefix }).map { |s| [s.list, s.prefix] }
 
       reals = hits - safes
 
       if reals.any?
-        full_hashes = HttpHelper.request_full_hashes(reals.collect{|r| r[1] })
+        full_hashes = HttpHelper.request_full_hashes(reals.map { |r| r[1] })
 
         # save hashes first
         # cannot return early because all FullHashes need to be saved
         hit_list = nil
         full_hashes.each do |hash|
-          FullHash.create!(:list => hash[:list], :add_chunk_number => hash[:add_chunk_num],
-                                       :full_hash => hash[:full_hash])
+          FullHash.create!(list: hash[:list],
+                           add_chunk_number: hash[:add_chunk_num],
+                           full_hash: hash[:full_hash])
 
           hit_list = hash[:list] if raw_hash_array.include?(hash[:full_hash])
         end
@@ -59,16 +59,19 @@ module GoogleSafeBrowsing
 
     # Can be used to force a delay into a script running updates
     #
-    # @param (Integer) delay_seconds the number of seconds to delay, should be the return value of {update}
+    # @param (Integer) delay_seconds the number of seconds to delay, should be
+    # the return value of {update}
     def self.delay(delay_seconds)
-      puts "Google told us to wait for #{delay_seconds} seconds"
-      puts "We will wait...."
+      GoogleSafeBrowsing.logger.info \
+        "Google told us to wait for #{delay_seconds} seconds"
+      GoogleSafeBrowsing.logger.info 'We will wait....'
       start_time = Time.now
-      while(start_time + delay_seconds > Time.now)
-          puts "#{(delay_seconds - (Time.now - start_time)).to_i}..."
+      until start_time + delay_seconds <= Time.now
+          GoogleSafeBrowsing.logger.info \
+            "#{(delay_seconds - (Time.now - start_time)).to_i}..."
           sleep(10)
       end
-      puts "Thank you for being patient"
+      GoogleSafeBrowsing.logger.info 'Thank you for being patient'
     end
   end
 end

@@ -88,12 +88,11 @@ describe GoogleSafeBrowsing::HttpHelper do
       end
 
       it 'throws a InvalidMACValidation error when the mac is invalid' do
-
-        -> {
+        expect do
           GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
             StubResponse.new(invalid_mac_response)
           end
-        }.should raise_error InvalidMACValidation
+        end.to raise_error InvalidMACValidation
       end
 
       context 'when the response is no content' do
@@ -113,27 +112,27 @@ describe GoogleSafeBrowsing::HttpHelper do
       let(:incorrect_data) { 'this will not come out correct' }
 
       it 'invalidates when no MAC is given' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, '').
-          should be_false
+        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, '')).to \
+          be_false
       end
 
       it 'invalidates when no data is given' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?('', expected_mac).
-          should be_false
+        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?('', expected_mac)).to \
+          be_false
       end
 
       it 'invalidates when no data or MAC is given' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?('', '').
-          should be_false
+        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?('', '')).to be_false
       end
 
       it 'validates a correct MAC based on the client key' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac).
-          should be_true
+        expect(
+          GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac)
+        ).to be_true
       end
 
       it 'invalidates when the client key does not match the computed MAC' do
-        GoogleSafeBrowsing.config.client_key = "this is not the key"
+        GoogleSafeBrowsing.config.client_key = 'this is not the key'
 
         GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac).
           should be_false
@@ -177,7 +176,10 @@ describe GoogleSafeBrowsing::HttpHelper do
   end
 
   def get_data_response
-    File.read("#{File.dirname(__FILE__)}/responses/get_data_body.txt")
+    File.read(File.join(File.dirname(__FILE__),
+                        '..',
+                        'responses',
+                        'get_data_body.txt'))
   end
 
   def get_keys_response
@@ -193,7 +195,7 @@ describe GoogleSafeBrowsing::HttpHelper do
   end
 
   def client_key
-    "Y2xpZW50IGtleQ=="
+    'Y2xpZW50IGtleQ=='
   end
 
   $first_time ||= true

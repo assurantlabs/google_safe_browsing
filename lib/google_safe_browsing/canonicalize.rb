@@ -5,7 +5,6 @@ require File.dirname(__FILE__) + '/top_level_domain.rb'
 module GoogleSafeBrowsing
   # Helpers to Canonicalize urls and generate url permutations for lookups
   class Canonicalize
-
     PROTOCOL_DELIMITER = '://'
     DEFAULT_PROTOCOL = 'http'
 
@@ -15,14 +14,15 @@ module GoogleSafeBrowsing
     # @return (String) canonicalized url string
     def self.url(raw_url)
       raw_url = raw_url.to_s
-      
-      # Change encoding from UTF-8 to ASCII-8BIT to avoid InvalidByteSequenceError
-      raw_url = raw_url.force_encoding("ASCII-8BIT")
 
-      #remove tabs, carriage returns and line feeds
-      raw_url.gsub!("\t",'')
-      raw_url.gsub!("\r",'')
-      raw_url.gsub!("\n",'')
+      # Change encoding from UTF-8 to ASCII-8BIT to avoid
+      # InvalidByteSequenceError
+      raw_url = raw_url.force_encoding('ASCII-8BIT')
+
+      # remove tabs, carriage returns and line feeds
+      raw_url.gsub!("\t", '')
+      raw_url.gsub!("\r", '')
+      raw_url.gsub!("\n", '')
 
       cann = raw_url.clone
       cann.gsub!(/\A\s+|\s+\Z/, '')
@@ -35,10 +35,10 @@ module GoogleSafeBrowsing
       # remove leading PROTOCOL
       cann = remove_protocol(cann)
 
-      #split into host and path components
+      # split into host and path components
       splits = split_host_path(cann)
 
-      cann = fix_host( splits[:host] ) + '/' + fix_path( splits[:path] )
+      cann = fix_host(splits[:host]) + '/' + fix_path(splits[:path])
 
       # add leading protocol
       @protocol ||= DEFAULT_PROTOCOL
@@ -53,7 +53,7 @@ module GoogleSafeBrowsing
     # @return (Array) array of cannonicalized url permutation strings
     def self.urls_for_lookup(lookup_url)
       lookup_url = url(lookup_url)
-      #return empty array if url returns nil; for invalid url
+      # return empty array if url returns nil; for invalid url
       return [] if lookup_url.blank?
 
       lookup_url = remove_protocol(lookup_url)
@@ -62,12 +62,12 @@ module GoogleSafeBrowsing
 
       host_string = strip_username_password_and_port_from_host(splits[:host])
 
-      #return empty array unless host_string has at least one period
+      # return empty array unless host_string has at least one period
       return [] unless host_string.include?('.')
 
       host_strings = [host_string]
       host = TopLevelDomain.split_from_host(host_string).last(5)
-      ( host.length - 1 ).times do 
+      (host.length - 1).times do
         host_strings << host.join('.')
         host.shift
       end
@@ -78,52 +78,43 @@ module GoogleSafeBrowsing
       cart_prod(host_strings, path_strings)
     end
 
-    # private
-
     # Generates the path permutations from the raw path string
     #
     # @param (String) raw_path path split from the full url string
     # @return (Array) array of path permutation strings
     def self.generate_path_strings(raw_path)
-      return [ '/', '' ] if raw_path == ''
+      return ['/', ''] if raw_path == ''
 
       path_split = raw_path.split('?')
       path = path_split[0] || ''
       params = path_split[1] || ''
 
-
       path_components = path.split('/').first(3)
-      path_strings = [ '/' ]
+      path_strings = ['/']
       path_components.length.times do
         path_strings << '/' + path_components.join('/')
         path_components.pop
       end
 
       path_strings.map! do |p|
-        unless p.index('.')
-          p + '/'
-        else
+        if p.index('.')
           p
+        else
+          p + '/'
         end
       end
-      path_strings.map!{ |p| p.to_s.gsub!(/\/+/, '/') }
+      path_strings.map! { |p| p.to_s.gsub!(/\/+/, '/') }
       path_strings.compact!
       path_strings.uniq!
 
-      unless params.blank?
-        path_strings | path_strings.map do |p|
-          if p[-1] == '/'
-            p
-          else
-            "#{p}?#{params}"
-          end
-        end
-      else
-        return path_strings
+      return path_strings if params.blank?
+      path_strings | path_strings.map do |p|
+        p[-1] == '/' ?  p : "#{p}?#{params}"
       end
     end
 
-    # Returns the cartesian product of two arrays by concatination of the string representation of the elements
+    # Returns the cartesian product of two arrays by concatination of the
+    # string representation of the elements
     #
     # @param (Array) a_one array of strings
     # @param (Array) a_two array of strings
@@ -141,24 +132,25 @@ module GoogleSafeBrowsing
     # Takes the canonicalized url and splits the host and the path apart
     #
     # @param (String) cann canonicalized url string
-    # @return (Hash) !{ :host => host_part, :path => path_part }
+    # @return (Hash) !{ host: host_part, path: path_part }
     def self.split_host_path(cann)
-      ret= { :host => cann, :path => '' }
+      ret = { host: cann, path: '' }
       split_point = cann.index('/')
       if split_point
-        ret[:host] = cann[0..split_point-1]
-        ret[:path] = cann[split_point+1..-1]
+        ret[:host] = cann[0..split_point - 1]
+        ret[:path] = cann[(split_point + 1)..-1]
       end
 
       ret
     end
 
-    # Strips the fragment portion of the url string (the last '#' and everything after)
+    # Strips the fragment portion of the url string (the last '#' and
+    # everything after)
     #
     # @param (String) string url
     # @return (String) parameter with the fragment removed
     def self.remove_fragment(string)
-      string = string[0..string.index('#')-1] if string.index('#')
+      string = string[0..(string.index('#') - 1)] if string.index('#')
       string
     end
 
@@ -167,9 +159,9 @@ module GoogleSafeBrowsing
     # @param (String) url url string
     # @return (String) fully unescaped url string
     def self.recursively_unescape(url)
-      compare_url = url.clone 
+      compare_url = url.clone
       url = URI.unescape(url)
-      while(compare_url != url)
+      until compare_url == url
         compare_url = url.clone
         url = URI.unescape(url)
       end
@@ -181,7 +173,6 @@ module GoogleSafeBrowsing
     # @param (String) host host string
     # @return (String) standardized host string
     def self.fix_host(host)
-      #puts "In Host: #{host}"
       # remove leading and trailing dots, multiple dots to one
       host.gsub!(/\A\.+|\.+\Z/, '')
       host.gsub!(/\.+/, '.')
@@ -194,7 +185,7 @@ module GoogleSafeBrowsing
         host_splits[:host] = IP::V4.new(host.to_i).to_addr
       elsif host_splits[:host] =~ /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
         begin
-          host_splits[:host] = IP.new(host).to_addr 
+          host_splits[:host] = IP.new(host).to_addr
         rescue ArgumentError
         end
       end
@@ -210,17 +201,15 @@ module GoogleSafeBrowsing
     # @param (String) path path string
     # @return (String) standardized path string
     def self.fix_path(path)
-      #puts "In Path: #{path}"
-
-      #remove leading slash
+      # remove leading slash
       path = path[1..-1] if path[0..0] == '/'
 
-      preserve_trailing_slash = ( path[-1..-1] == '/' )
+      preserve_trailing_slash = (path[-1..-1] == '/')
 
       if path.index('?')
         first_ques = path.index('?')
         params = path[first_ques..-1]
-        path = path[0..first_ques-1]
+        path = path[0..(first_ques - 1)]
       end
 
       # remove multiple '/'
@@ -247,7 +236,7 @@ module GoogleSafeBrowsing
       url = URI.escape url
 
       # unescape carat, may need other optionally escapeable chars
-      url.gsub!('%5E','^')
+      url.gsub!('%5E', '^')
 
       url
     end
@@ -259,7 +248,7 @@ module GoogleSafeBrowsing
     def self.remove_protocol(cann)
       if cann.index(PROTOCOL_DELIMITER)
         delimiting_index = cann.index(PROTOCOL_DELIMITER)
-        @protocol = cann[0..delimiting_index-1]
+        @protocol = cann[0..(delimiting_index - 1)]
         protocol_end_index = delimiting_index + PROTOCOL_DELIMITER.length
         cann = cann[protocol_end_index..-1]
       end

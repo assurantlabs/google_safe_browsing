@@ -38,13 +38,12 @@ module GoogleSafeBrowsing
       components
     end
 
-
-    private 
+    private
 
     def self.parse_tld_to_hash
       hash = Hash.new(nil)
-      f = File.open(File.dirname(__FILE__) + '/effective_tld_names.dat.txt', 'r')
-      while(line = f.gets)
+      file_name = File.dirname(__FILE__) + '/effective_tld_names.dat.txt'
+      File.readlines(file_name, 'r').each do |line|
         hash[line.chomp] = true unless line[0..1] == '//'
       end
       hash

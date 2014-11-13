@@ -46,33 +46,41 @@ module GoogleSafeBrowsing
     end
   end
 
-  # Returns of initializes the Module configuration
-  def self.config
-    @@config ||= Config.new
-  end
+  class << self
+    attr_accessor :logger
 
-  # Allows for setting config values via a block
-  def self.configure
-    yield self.config
-  end
+    def logger
+      @logger ||= Logger.new
+    end
 
-  # Adds the Rescheduler job to Resque
-  def self.kick_off
-    Resque.enqueue(Rescheduler)
-  end
+    # Returns of initializes the Module configuration
+    def config
+      @@config ||= Config.new
+    end
 
-  # Converts the official Google list name into the name to return
-  #
-  # @param (String) list the 'official' list name
-  # @return (String) the friendly list name
-  def self.friendly_list_name(list)
-    case list
-    when 'goog-malware-shavar'
-      'malware'
-    when 'googpub-phish-shavar'
-      'phishing'
-    else
-      nil
+    # Allows for setting config values via a block
+    def configure
+      yield config
+    end
+
+    # Adds the Rescheduler job to Resque
+    def kick_off
+      Resque.enqueue(Rescheduler)
+    end
+
+    # Converts the official Google list name into the name to return
+    #
+    # @param (String) list the 'official' list name
+    # @return (String) the friendly list name
+    def friendly_list_name(list)
+      case list
+      when 'goog-malware-shavar'
+        'malware'
+      when 'googpub-phish-shavar'
+        'phishing'
+      else
+        nil
+      end
     end
   end
 end

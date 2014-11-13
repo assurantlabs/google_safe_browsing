@@ -3,11 +3,11 @@ module GoogleSafeBrowsing
     @queue = :google_safe_browsing
 
     def self.perform
-      puts "Running Update"
+      GoogleSafeBrowsing.logger.info "Running Update"
       delay = APIv2.update
-      puts "Scheduling new update in #{delay} seconds"
+      GoogleSafeBrowsing.logger.info "Scheduling new update in #{delay} seconds"
       Resque.enqueue_in(delay.seconds, Rescheduler)
-      puts "Update scheduled"
+      GoogleSafeBrowsing.logger.info "Update scheduled"
     end
 
   end

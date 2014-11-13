@@ -57,6 +57,8 @@ module GoogleSafeBrowsing
           GoogleSafeBrowsing.config.client_key = key_value
         when 'wrappedkey'
           GoogleSafeBrowsing.config.wrapped_key = key_value
+        else
+          GoogleSafeBrwosing::Logger.warn "Unknown MAC key: #{key_name}"
         end
       end
     end

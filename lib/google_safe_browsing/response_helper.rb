@@ -49,6 +49,9 @@ module GoogleSafeBrowsing
           # we no longer have to report that we received these chunks
           SubShavar.delete_chunks_from_list(current_list,
                                             ChunkList.new(vals[1]))
+        else
+          GoogleSafeBrowsing.logger.warn \
+            "Unknown data response directive: #{vals[0]}"
         end
       end
 
@@ -75,9 +78,11 @@ module GoogleSafeBrowsing
           chunk  = f.read(line_actions[:chunk_length])
           # f iterator is now set for next chunk
 
-          add_attrs = { :chunk_number => line_actions[:chunk_number],
-                    :list => list, :prefix => nil, :host_key => nil
-                  }
+          add_attrs = { chunk_number: line_actions[:chunk_number],
+                        list: list,
+                        prefix: nil,
+                        host_key: nil
+                      }
 
           case line_actions[:action]
           when 'a'
@@ -102,11 +107,14 @@ module GoogleSafeBrowsing
                   counter += 1
                 end
               rescue StopIteration
-                puts "Added #{counter} host_keys for add chunk number #{line_actions[:chunk_number]}"
+                GoogleSafeBrowsing.logger.info <<-LOG.gsub(/\n\s*/, '')
+                  Added #{counter} host_keys for add chunk number
+                  #{line_actions[:chunk_number]}
+                  LOG
               end
             end
           when 's'
-            sub_attrs = add_attrs.merge({ :add_chunk_number => nil })
+            sub_attrs = add_attrs.merge({ add_chunk_number: nil })
             if line_actions[:chunk_length] == 0
               record_sub_shavar_to_insert(sub_attrs)
             else
@@ -130,11 +138,16 @@ module GoogleSafeBrowsing
                   counter += 1
                 end
               rescue StopIteration
-                puts "Added #{counter} host_keys for sub chunk number #{line_actions[:chunk_number]}"
+                GoogleSafeBrowsing.logger.info <<-LOG.gsub(/\n\s*/, '')
+                  Added #{counter} host_keys for sub chunk number
+                  #{line_actions[:chunk_number]}
+                LOG
               end
             end
           else
-            puts "neither a nor s ======================================================="
+            GoogleSafeBrowsing.logger.info <<-LOG.gsub(/\n\s*/, '')
+              neither a nor s =================================================
+            LOG
           end
 
         end
@@ -165,16 +178,16 @@ module GoogleSafeBrowsing
 
     def self.record_add_shavar_to_insert(h)
       @add_shavar_values ||= []
-      values = [ h[:prefix], h[:host_key], h[:chunk_number], h[:list] ]
+      values = [h[:prefix], h[:host_key], h[:chunk_number], h[:list]]
       @add_shavar_values << "(#{escape_and_join values})"
     end
     def self.record_sub_shavar_to_insert(h)
       @sub_shavar_values ||= []
-      values = [ h[:prefix],
-                 h[:host_key],
-                 h[:add_chunk_number],
-                 h[:chunk_number],
-                 h[:list] ]
+      values = [h[:prefix],
+                h[:host_key],
+                h[:add_chunk_number],
+                h[:chunk_number],
+                h[:list]]
       @sub_shavar_values << "(#{escape_and_join values})"
     end
 
@@ -182,10 +195,10 @@ module GoogleSafeBrowsing
       split_line = line.split(':')
 
       ret = {}
-      ret[ :action ]        = split_line[0]
-      ret[ :chunk_number ]  = split_line[1].to_i
-      ret[ :hash_length ]   = split_line[2].to_i
-      ret[ :chunk_length ]  = split_line[3].to_i
+      ret[:action]        = split_line[0]
+      ret[:chunk_number]  = split_line[1].to_i
+      ret[:hash_length]   = split_line[2].to_i
+      ret[:chunk_length]  = split_line[3].to_i
       ret
     end
 
@@ -196,7 +209,7 @@ module GoogleSafeBrowsing
     end
 
     def self.pop_and_join(records)
-      records.pop(10000).join(', ')
+      records.pop(10_000).join(', ')
     end
   end
 end

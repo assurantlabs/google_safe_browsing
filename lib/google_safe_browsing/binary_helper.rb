@@ -1,7 +1,6 @@
 module GoogleSafeBrowsing
   # Helper methods for working with binary encoded data from Forwarding URLs
   class BinaryHelper
-
     # Reads `counter` byes from byte iterator `iter` and returns the hex string represnetation
     #
     # @param [ByteIterator] iter byte iterator already at correct position
@@ -19,7 +18,6 @@ module GoogleSafeBrowsing
       string.unpack('H8')[0]
     end
 
-
     # Read `count` bytes from `iter` without unpacking the result
     #
     # @param (see read_bytes_as_hex)
@@ -30,9 +28,6 @@ module GoogleSafeBrowsing
       ret = ''
       count.to_i.times { ret << iter.next }
       ret
-   #rescue
-   #  puts "Tried to read past chunk iterator++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-   #  return nil
     end
 
     # Returns the first four bytes of `string` as hexidecimal; for host key
@@ -66,6 +61,5 @@ module GoogleSafeBrowsing
     def self.hex_to_bin(hex)
       [hex].pack('H*')
     end
-
   end
 end
