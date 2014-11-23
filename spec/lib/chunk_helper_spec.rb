@@ -1,12 +1,8 @@
 require 'spec_helper'
 
 describe GoogleSafeBrowsing::ChunkHelper do
-  before do
-    GoogleSafeBrowsing.config.stub(:have_keys?).and_return(false)
-  end
-
   describe 'building chunk lists' do
-    describe 'without and chunks' do
+    describe 'without any chunks' do
       it 'should build a single chunk list if given a list' do
         GoogleSafeBrowsing::ChunkHelper.build_chunk_list('googpub-phish-shavar').
           should eq "googpub-phish-shavar;\n"

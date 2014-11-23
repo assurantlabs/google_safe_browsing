@@ -1,12 +1,10 @@
 module GoogleSafeBrowsing
   # Main Interface for Module
-  class APIv2
+  class APIv3
     # Completes an update
     #
     # @return (Integer) the number of seconds before this method should be called again
     def self.update
-      HttpHelper.get_keys unless GoogleSafeBrowsing.config.have_keys?
-
       data_response = HttpHelper.get_data
 
       to_do_array = ResponseHelper.parse_data_response(data_response.body)

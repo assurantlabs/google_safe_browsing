@@ -28,21 +28,14 @@ require  'google_safe_browsing/rescheduler'
 module GoogleSafeBrowsing
   # Handles the configuration values for the module
   class Config
-    attr_accessor :client, :app_ver, :p_ver, :host, :current_lists, :api_key,
-      :mac_required, :client_key, :wrapped_key, :rekey_host
+    attr_accessor :client, :app_ver, :p_ver, :host, :current_lists, :api_key
 
     def initialize
-      @client         = 'api'
-      @app_ver        = VERSION
-      @p_ver          = '2.2'
-      @host           = 'http://safebrowsing.clients.google.com/safebrowsing'
-      @rekey_host     = 'https://sb-ssl.google.com/safebrowsing'
-      @current_lists  = ['googpub-phish-shavar', 'goog-malware-shavar']
-      @mac_required   = true
-    end
-
-    def have_keys?
-      @mac_required && @client_key.present? && @wrapped_key.present?
+      @client = 'api'
+      @app_ver = VERSION
+      @p_ver = '3.0'
+      @host = 'https://safebrowsing.google.com/safebrowsing'
+      @current_lists = ['googpub-phish-shavar', 'goog-malware-shavar']
     end
   end
 
