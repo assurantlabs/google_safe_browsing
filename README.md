@@ -98,7 +98,7 @@ not on Google's list.
 ## Contributing
 
 We've already had some [great
-contributers](https://github.com/mobiledefense/google_safe_browsing/graphs/contributors).
+contributors](https://github.com/mobiledefense/google_safe_browsing/graphs/contributors).
 If you'd like to join us, we'd love to have you. When contributing please
 
 1. [Fork](https://github.com/mobiledefense/google_safe_browsing/fork) the repo
