@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "Rails 3 plugin for Google's Safe Browsing API v2"
   s.description = "Rails 3 plugin using Google's Safe Browsing API for url lookup against Malware and Phishing " +
     "blacklists. Implementation includes storing and updating locally stored shavar lists and url lookup methods."
+  s.license     = 'Apache 2.0'
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["APACHE-LICENSE", "Rakefile", "README.md"]
   s.require_path = 'lib'
