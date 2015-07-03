@@ -112,34 +112,34 @@ describe GoogleSafeBrowsing::HttpHelper do
 
       it 'invalidates when no MAC is given' do
         expect(GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, '')).to \
-          be_false
+          be_falsey
       end
 
       it 'invalidates when no data is given' do
         expect(GoogleSafeBrowsing::HttpHelper.valid_mac?('', expected_mac)).to \
-          be_false
+          be_falsey
       end
 
       it 'invalidates when no data or MAC is given' do
-        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?('', '')).to be_false
+        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?('', '')).to be_falsey
       end
 
       it 'validates a correct MAC based on the client key' do
         expect(
           GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac)
-        ).to be_true
+        ).to be_truthy
       end
 
       it 'invalidates when the client key does not match the computed MAC' do
         GoogleSafeBrowsing.config.client_key = 'this is not the key'
 
         GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac).
-          should be_false
+          should be_falsey
       end
 
       it 'invalidates when the provided MAC does not match the computed MAC' do
         GoogleSafeBrowsing::HttpHelper.valid_mac?(incorrect_data, expected_mac).
-          should be_false
+          should be_falsey
       end
     end
 
@@ -159,11 +159,11 @@ describe GoogleSafeBrowsing::HttpHelper do
     describe '.please_rekey?' do
       it 'returns true when the response includes the please rekey directive' do
         GoogleSafeBrowsing::HttpHelper.please_rekey?(please_rekey_response).
-          should be_true
+          should be_truthy
       end
 
       it 'returns false when no rekey directive appears' do
-        GoogleSafeBrowsing::HttpHelper.please_rekey?(get_data_response).should be_false
+        GoogleSafeBrowsing::HttpHelper.please_rekey?(get_data_response).should be_falsey
       end
     end
 
