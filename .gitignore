@@ -8,3 +8,4 @@ tmp/
 .yardoc/
 .ruby-version
 coverage/
+Gemfile.lock
