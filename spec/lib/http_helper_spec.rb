@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'ostruct'
 
-class StubResponse < Struct.new(:body); end
+Struct.new('StubResponse', :body)
 
 describe GoogleSafeBrowsing::HttpHelper do
   let(:encoded_params) { "?client=api&apikey=#{GoogleSafeBrowsing.config.api_key}&appver=#{GoogleSafeBrowsing.config.app_ver}&pver=2.2" }
@@ -69,7 +68,7 @@ describe GoogleSafeBrowsing::HttpHelper do
         GoogleSafeBrowsing.config.client_key = nil
 
         GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
-          StubResponse.new(get_data_response)
+          Struct::StubResponse.new(get_data_response)
         end
 
         WebMock.should have_requested(:get, rekey_url)
@@ -82,7 +81,7 @@ describe GoogleSafeBrowsing::HttpHelper do
       end
 
       it 'returns the response if the mac is valid' do
-        expected_response = StubResponse.new(get_data_response)
+        expected_response = Struct::StubResponse.new(get_data_response)
         GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) { expected_response }.
           should == expected_response
       end
@@ -90,7 +89,7 @@ describe GoogleSafeBrowsing::HttpHelper do
       it 'throws a InvalidMACValidation error when the mac is invalid' do
         expect do
           GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
-            StubResponse.new(invalid_mac_response)
+            Struct::StubResponse.new(invalid_mac_response)
           end
         end.to raise_error InvalidMACValidation
       end
@@ -99,7 +98,7 @@ describe GoogleSafeBrowsing::HttpHelper do
         it 'is nil' do
           expect(
             GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) do
-              StubResponse.new(nil)
+              Struct::StubResponse.new(nil)
             end
           ).to be_nil
         end
@@ -208,7 +207,7 @@ describe GoogleSafeBrowsing::HttpHelper do
                  get_data_response
                end
 
-    StubResponse.new(response)
+    Struct::StubResponse.new(response)
   end
 
   def set_keys
