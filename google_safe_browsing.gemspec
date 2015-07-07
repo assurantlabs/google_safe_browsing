@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*"] + ["APACHE-LICENSE", "Rakefile", "README.md"]
   s.require_path = 'lib'
 
-  s.add_dependency "rails"
+  s.add_dependency "rails", "~> 3.2"
   s.add_dependency 'ruby-ip'
   s.add_dependency 'activerecord'
 
