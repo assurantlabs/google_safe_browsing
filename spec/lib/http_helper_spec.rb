@@ -7,7 +7,7 @@ describe GoogleSafeBrowsing::HttpHelper do
   let(:rekey_url) { "https://sb-ssl.google.com/safebrowsing/newkey#{encoded_params}" }
   before(:each) do
     set_keys
-    stub_request(:get, rekey_url).to_return(body: get_keys_response)
+    WebMock.stub_request(:get, rekey_url).to_return(body: get_keys_response)
   end
 
   describe '.uri_builder' do
@@ -19,16 +19,16 @@ describe GoogleSafeBrowsing::HttpHelper do
 
     it 'builds URIs from actions' do
       expected = URI("#{GoogleSafeBrowsing.config.host}/#{action}#{encoded_params}")
-      GoogleSafeBrowsing::HttpHelper.uri_builder(action).should == expected
+      expect(GoogleSafeBrowsing::HttpHelper.uri_builder(action)).to eq expected
     end
 
     it 'builds https URIs from actions' do
-      GoogleSafeBrowsing::HttpHelper.uri_builder(action, true).to_s[0..4].should == 'https'
+      expect(GoogleSafeBrowsing::HttpHelper.uri_builder(action, true).to_s[0..4]).to eq 'https'
     end
 
     it 'excludes the wrapped key when mac is not required' do
       GoogleSafeBrowsing.config.mac_required = false
-      GoogleSafeBrowsing::HttpHelper.uri_builder(action).request_uri.should_not =~ /wrkey/
+      expect(GoogleSafeBrowsing::HttpHelper.uri_builder(action).request_uri).not_to match /wrkey/
     end
   end
 
@@ -37,11 +37,11 @@ describe GoogleSafeBrowsing::HttpHelper do
 
     it 'executes a post to Google' do
       GoogleSafeBrowsing.config.mac_required = false
-      stub_request(:post, api_url).to_return(body: get_data_response)
+      WebMock.stub_request(:post, api_url).to_return(body: get_data_response)
 
       GoogleSafeBrowsing::HttpHelper.get_data
 
-      WebMock.should have_requested(:post, api_url)
+      expect(WebMock).to have_requested(:post, api_url)
     end
 
   end
@@ -55,8 +55,8 @@ describe GoogleSafeBrowsing::HttpHelper do
     it 'sets the MAC keys' do
       GoogleSafeBrowsing::HttpHelper.get_keys
 
-      GoogleSafeBrowsing.config.client_key.should_not be_nil
-      GoogleSafeBrowsing.config.wrapped_key.should_not be_nil
+      expect(GoogleSafeBrowsing.config.client_key).to_not be_nil
+      expect(GoogleSafeBrowsing.config.wrapped_key).to_not be_nil
     end
   end
 
@@ -71,19 +71,19 @@ describe GoogleSafeBrowsing::HttpHelper do
           Struct::StubResponse.new(get_data_response)
         end
 
-        WebMock.should have_requested(:get, rekey_url)
+        expect(WebMock).to have_requested(:get, rekey_url)
       end
 
       it 'attempts to rekey if the response indicates such' do
         GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) { rekey_then_valid }
 
-        WebMock.should have_requested(:get, rekey_url)
+        expect(WebMock).to have_requested(:get, rekey_url)
       end
 
       it 'returns the response if the mac is valid' do
         expected_response = Struct::StubResponse.new(get_data_response)
-        GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) { expected_response }.
-          should == expected_response
+        expect(GoogleSafeBrowsing::HttpHelper.with_keys(api_uri) { expected_response }).
+          to eq expected_response
       end
 
       it 'throws a InvalidMACValidation error when the mac is invalid' do
@@ -133,43 +133,43 @@ describe GoogleSafeBrowsing::HttpHelper do
       it 'invalidates when the client key does not match the computed MAC' do
         GoogleSafeBrowsing.config.client_key = 'this is not the key'
 
-        GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac).
-          should be_falsey
+        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?(correct_data, expected_mac)).
+          to be_falsey
       end
 
       it 'invalidates when the provided MAC does not match the computed MAC' do
-        GoogleSafeBrowsing::HttpHelper.valid_mac?(incorrect_data, expected_mac).
-          should be_falsey
+        expect(GoogleSafeBrowsing::HttpHelper.valid_mac?(incorrect_data, expected_mac)).
+          to be_falsey
       end
     end
 
     describe '.post_data' do
       it 'accepts a block to compose the request body' do
-        stub_request(:post, api_uri.to_s).to_return(status: 200,
+        WebMock.stub_request(:post, api_uri.to_s).to_return(status: 200,
                                                     body: get_data_response,
                                                     headers: {})
         expected_body = 'hello'
         GoogleSafeBrowsing::HttpHelper.post_data(api_uri) { expected_body }
 
-        WebMock.should have_requested(:post, api_uri.to_s).
+        expect(WebMock).to have_requested(:post, api_uri.to_s).
           with(body: expected_body)
       end
     end
 
     describe '.please_rekey?' do
       it 'returns true when the response includes the please rekey directive' do
-        GoogleSafeBrowsing::HttpHelper.please_rekey?(please_rekey_response).
-          should be_truthy
+        expect(GoogleSafeBrowsing::HttpHelper.please_rekey?(please_rekey_response)).
+          to be_truthy
       end
 
       it 'returns false when no rekey directive appears' do
-        GoogleSafeBrowsing::HttpHelper.please_rekey?(get_data_response).should be_falsey
+        expect(GoogleSafeBrowsing::HttpHelper.please_rekey?(get_data_response)).to be_falsey
       end
     end
 
     describe '.switch_to_https' do
       it 'replaces the http protocol with https' do
-        GoogleSafeBrowsing::HttpHelper.switch_to_https('http://mobiledefense.com').should == 'https://mobiledefense.com'
+        expect(GoogleSafeBrowsing::HttpHelper.switch_to_https('http://mobiledefense.com')).to eq 'https://mobiledefense.com'
       end
     end
   end

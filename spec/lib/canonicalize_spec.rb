@@ -115,12 +115,12 @@ describe GoogleSafeBrowsing::Canonicalize do
     it 'should remove the port when present' do
       host = 'test.url.com/'
       url = "#{host}:8000"
-      GoogleSafeBrowsing::Canonicalize.remove_port(url).should eq host
+      expect(GoogleSafeBrowsing::Canonicalize.remove_port(url)).to eq host
     end
 
     it 'should return the original string if no port present' do
       host = 'test.url.com/'
-      GoogleSafeBrowsing::Canonicalize.remove_port(host).should eq host
+      expect(GoogleSafeBrowsing::Canonicalize.remove_port(host)).to eq host
     end
   end
 
@@ -128,25 +128,25 @@ describe GoogleSafeBrowsing::Canonicalize do
     it 'should remove the username and password when present' do
       host = 'test.url.com/'
       url = "tester:pa55word@#{host}"
-      GoogleSafeBrowsing::Canonicalize.
-        remove_username_and_password(url).should eq host
+      expect(GoogleSafeBrowsing::Canonicalize.
+        remove_username_and_password(url)).to eq host
     end
 
     it 'should return the original string if no username/password present' do
       host = 'test.url.com/'
-      GoogleSafeBrowsing::Canonicalize.
-        remove_username_and_password(host).should eq host
+      expect(GoogleSafeBrowsing::Canonicalize.
+        remove_username_and_password(host)).to eq host
     end
   end
 
   describe 'fixing invalid hosts' do
     it 'should return nil for local IP Addresses' do
       host = '192.168.1.1'
-        GoogleSafeBrowsing::Canonicalize.fix_host(host).should eq host
+      expect(GoogleSafeBrowsing::Canonicalize.fix_host(host)).to eq host
     end
     it 'should return nil regardless of creds or port' do
       host = 'what:beef@192.168.1.1:3000'
-        GoogleSafeBrowsing::Canonicalize.fix_host(host).should eq host
+        expect(GoogleSafeBrowsing::Canonicalize.fix_host(host)).to eq host
     end
   end
 end

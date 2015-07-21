@@ -11,12 +11,12 @@ describe GoogleSafeBrowsing::HashHelper do
     it 'should return the first 8 characters as the prefix' do
       hash = '1234567891011'
       prefix = hash[0..7]
-      GoogleSafeBrowsing::HashHelper::GsbHash.new(hash).prefix.should eq prefix
+      expect(GoogleSafeBrowsing::HashHelper::GsbHash.new(hash).prefix).to eq prefix
     end
 
     it 'should retrun the whole hash on string conversion' do
       hash = '1234567891011'
-      "#{ GoogleSafeBrowsing::HashHelper::GsbHash.new(hash) }".should eq hash
+      expect("#{ GoogleSafeBrowsing::HashHelper::GsbHash.new(hash) }").to eq hash
     end
   end
 
