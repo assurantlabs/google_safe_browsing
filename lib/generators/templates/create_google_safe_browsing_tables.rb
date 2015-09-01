@@ -6,7 +6,7 @@ class CreateGoogleSafeBrowsingTables < ActiveRecord::Migration
       t.integer :add_chunk_number
       t.string  :list
     end
-    add_index :gsb_full_hashes, :full_hash
+    add_index :gsb_full_hashes, :full_hash, length: 190
 
     create_table :gsb_add_shavars do |t|
       t.string :prefix
