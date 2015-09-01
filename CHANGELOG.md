@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6.5
+
+  * Limit full hash index key length to prevent MySQL errors when adding the
+  key.
+
+  Thanks to John Mullins for
+  [reporting](https://github.com/mobiledefense/google_safe_browsing/issues/25).
+
 ## v0.6.4
 
   * Update vulnerable dependencies and added explicit support for Ruby 2.2.x.
